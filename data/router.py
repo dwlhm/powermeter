@@ -26,6 +26,7 @@ async def get_data_arsip(id: str, interval: Literal["hourly", "daily", "weekly",
         )
     
     item = result.get("data")
+    print("item: ", item)
     data = { "data": {
                 "phase_voltage_a": [],
                 "phase_voltage_b": [],
