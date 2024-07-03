@@ -1,4 +1,4 @@
-import { AdjustmentsHorizontalIcon, ChartPieIcon, CurrencyDollarIcon, WrenchIcon } from "@heroicons/react/24/outline";
+import { AdjustmentsHorizontalIcon, ChartPieIcon } from "@heroicons/react/24/outline";
 import { PerangkatSubBody, PerangkatSubHeadingPanel, PerangkatSubTitle } from "../components";
 import { LayoutPerangkatCard } from "./perangkat.card";
 import { Button } from "@headlessui/react";
