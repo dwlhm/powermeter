@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from dependencies import oauth2_scheme
 from configuration.config import load_config
 from .db import get_tarif, update_tarif
@@ -28,9 +29,12 @@ async def get_tarif_listrik():
         }
     }
 
+class TarifListrik(BaseModel):
+    harga: int
+
 @router.put("/")
-async def update_tarif_listrik(harga: int):
-    result = update_tarif(harga=harga, config=load_config())
+async def update_tarif_listrik(tarifListrik: TarifListrik):
+    result = update_tarif(harga=tarifListrik.harga, config=load_config())
     if result.get("error"): return HTTPException(
         status_code=400,
         detail=result.get("error")
