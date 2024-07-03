@@ -99,7 +99,7 @@ export const PerangkatDataRepresentation = (
       <div className="grid sm:grid-cols-3 gap-2">
         {props.register.map((item) => (
           <LayoutPerangkatCard key={`i.c.${item[4]}`}>
-            <h4 className="text-base font-medium">{item[3]}</h4>
+            <h4 className="text-base font-medium">{`${item[3]} ${item[2] !== " " ? `(${item[2]})` : ""}`}</h4>
             <div className="my-1 h-px bg-white/50 mb-2" />
 
             <CompPerangkatLineChart

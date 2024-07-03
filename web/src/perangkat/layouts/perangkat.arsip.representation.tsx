@@ -45,9 +45,9 @@ export const PerangkatArsipRepresentation = (
           <thead className="bg-gray-900">
             <tr className="text-gray-100">
               <th className="px-3 py-6">No</th>
-              <th className="px-3 py-6">Timestamp</th>
+              <th className="px-3 py-6 min-w-40">Timestamp</th>
               {props.register.map((v) => (
-                <th key={v[3]} className="px-3 py-6">{v[3]}</th>
+                <th key={v[3]} className="px-3 py-6 min-w-40">{`${v[3]} ${v[2] !== " " ? `(${v[2]})` : ""}`}</th>
               ))}
             </tr>
           </thead>
