@@ -11,7 +11,11 @@ def get_data_with_datetime_fromonly_limit(interval, id, date_from, limit, config
     else:
         mode_name = "data_" + interval
     
-    return get_db(sql.SQL(sql_get_data_w_datetime_fromonly_limit).format(table_name=sql.Identifier(mode_name)), ( base64.b64decode(id).decode(), date_from, limit, ), config)
+    return get_db(
+        sql=sql.SQL(sql_get_data_w_datetime_fromonly_limit).format(table_name=sql.Identifier(mode_name)), 
+        param=( base64.b64decode(id).decode(), date_from, limit, ), 
+        config=config
+        )
 
 def get_data_with_datetime_fromonly(interval, id, date_from, config):
 
@@ -20,7 +24,11 @@ def get_data_with_datetime_fromonly(interval, id, date_from, config):
     else:
         mode_name = "data_" + interval
     
-    return get_db(sql.SQL(sql_get_data_w_datetime_fromonly).format(table_name=sql.Identifier(mode_name)), ( base64.b64decode(id).decode(), date_from, ), config)
+    return get_db(
+        sql=sql.SQL(sql_get_data_w_datetime_fromonly).format(table_name=sql.Identifier(mode_name)), 
+        param=( base64.b64decode(id).decode(), date_from, ), 
+        config=config
+        )
 
 def get_data_with_datetime_limit(interval, id, date_from, date_to, limit, config):
 
@@ -29,7 +37,11 @@ def get_data_with_datetime_limit(interval, id, date_from, date_to, limit, config
     else:
         mode_name = "data_" + interval
     
-    return get_db(sql.SQL(sql_get_data_w_datetime_limit).format(table_name=sql.Identifier(mode_name)), ( base64.b64decode(id).decode(), date_from, date_to, limit, ), config)
+    return get_db(
+        sql=sql.SQL(sql_get_data_w_datetime_limit).format(table_name=sql.Identifier(mode_name)), 
+        param=( base64.b64decode(id).decode(), date_from, date_to, limit, ), 
+        config=config
+        )
 
 def get_data_with_datetime(interval, id, date_from, date_to, config):
 
@@ -38,7 +50,11 @@ def get_data_with_datetime(interval, id, date_from, date_to, config):
     else:
         mode_name = "data_" + interval
     
-    return get_db(sql.SQL(sql_get_data_w_datetime).format(table_name=sql.Identifier(mode_name)), ( base64.b64decode(id).decode(), date_from, date_to, ), config)
+    return get_db(
+        sql=sql.SQL(sql_get_data_w_datetime).format(table_name=sql.Identifier(mode_name)), 
+        param=( base64.b64decode(id).decode(), date_from, date_to, ), 
+        config=config
+        )
 
 def get_data_with_limit(interval, id, limit, config):
     
@@ -47,7 +63,10 @@ def get_data_with_limit(interval, id, limit, config):
     else:
         mode_name = "data_" + interval
 
-    return get_db(sql.SQL(sql_get_data_w_limit).format(table_name=sql.Identifier(mode_name)), ( base64.b64decode(id).decode(), limit, ), config)
+    return get_db(
+        sql=sql.SQL(sql_get_data_w_limit).format(table_name=sql.Identifier(mode_name)), 
+        param=( base64.b64decode(id).decode(), limit, ), 
+        config=config)
 
 def data_action_avg(interval: str, id:str, config: any):
 
