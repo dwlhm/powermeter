@@ -7,6 +7,7 @@ from user.db import get_user_by_username, insert_new_user
 from user.auth.internal import get_password_hash
 from user.internal import User
 from configuration import config
+from tagihan_listrik.db import get_tarif, create_tarif
 
 def create_tables():
     """ Create tables in the PostgreSQL database """
@@ -459,17 +460,23 @@ def create_tables():
         ON data_hourly(timestamp)
         """,
         """
-        CREATE TABLE IF NOT EXISTS tarif_listrik (
+        CREATE TABLE IF NOT EXISTS estimasi_tagihan_listrik (
             id SERIAL PRIMARY KEY,
-            harga FLOAT8 NOT NULL,
-            createdAt TIMESTAMPTZ
+            device_id INT NOT NULL,
+            tarif_listrik INT NOT NULL,
+            estimasi INT,
+            harga INT,
+            power FLOAT8,
+            created_at TIMESTAMPTZ NOT NULL,
+            updated_at TIMESTAMPTZ
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS estimasi_tagihan_listrik (
+        CREATE TABLE IF NOT EXISTS tarif_listrik (
             id SERIAL PRIMARY KEY,
-            perangkat INT NOT NULL,
-            
+            harga INT NOT NULL,
+            created_at TIMESTAMPTZ NOT NULL,
+            updated_at TIMESTAMPTZ
         )
         """
     )
@@ -502,6 +509,12 @@ def create_tables():
         }
         res = insert_new_user(User(**new_user), config_db)
         print("Add master account: ", res)
+
+    tarifExsist = get_tarif(load_config())
+
+    if tarifExsist.get("data") == []:
+        new_tarif = create_tarif(harga=2000, config=load_config())
+        if new_tarif.get("data"): print("tarif dibuat")
 
 if __name__ == '__main__':
     create_tables()

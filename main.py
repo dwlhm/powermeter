@@ -10,6 +10,7 @@ import unit.router as unit
 import gedung.router as gedung
 import device.router as device
 import data.router as data
+import tagihan_listrik.router as tagihan_listrik
 
 from configuration.config import load_config
 
@@ -41,3 +42,4 @@ app.include_router(unit.router)
 app.include_router(gedung.router)
 app.include_router(device.router)
 app.include_router(data.router)
+app.include_router(tagihan_listrik.router)

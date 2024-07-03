@@ -1,6 +1,6 @@
 import psycopg2
 
-def get(sql, param, config):
+def get(sql, config, param = None):
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
