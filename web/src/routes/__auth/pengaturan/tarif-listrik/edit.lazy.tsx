@@ -7,9 +7,8 @@ import {
 } from "@/tarif_listrik/hooks";
 import { Button } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, createLazyFileRoute, useRouter } from "@tanstack/react-router";
+import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 import React from "react";
-import { useQueries, useQueryClient } from "react-query";
 
 export const Route = createLazyFileRoute(
   "/__auth/pengaturan/tarif-listrik/edit",

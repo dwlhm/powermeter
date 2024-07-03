@@ -1,7 +1,6 @@
 import { useAuth } from "@/auth";
 import { CompLoading, LayoutError } from "@/common";
 import { useQueryTarifListrik } from "@/tarif_listrik/hooks";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { Link, Outlet, createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/__auth/pengaturan/tarif-listrik")({
