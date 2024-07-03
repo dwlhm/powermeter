@@ -457,6 +457,20 @@ def create_tables():
         """
         CREATE INDEX IF NOT EXISTS timestamp
         ON data_hourly(timestamp)
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS tarif_listrik (
+            id SERIAL PRIMARY KEY,
+            harga FLOAT8 NOT NULL,
+            createdAt TIMESTAMPTZ
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS estimasi_tagihan_listrik (
+            id SERIAL PRIMARY KEY,
+            perangkat INT NOT NULL,
+            
+        )
         """
     )
     config_db = config.load_config()
