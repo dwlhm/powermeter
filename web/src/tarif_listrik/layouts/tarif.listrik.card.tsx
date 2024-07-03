@@ -3,7 +3,7 @@ import { LayoutPerangkatCard } from "@/perangkat/layouts";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { useQueryTarifListrik } from "../hooks";
 import { CompLoading, LayoutError } from "@/common";
-import { Button } from "@headlessui/react";
+import { Link } from "@tanstack/react-router";
 
 export const TarifListrikCard = (props: { token: string | null }) => {
   const tarifListrik = useQueryTarifListrik(props.token);
@@ -38,9 +38,12 @@ export const TarifListrikCard = (props: { token: string | null }) => {
             : new Date(tarifListrik.data.results.updated_at).toLocaleString()}
         </p>
         <div className="flex justify-end mt-5">
-          <Button className="text-xs backdrop-blur bg-gray-400 hover:bg-gray-200 text-gray-900 font-medium py-2 px-4 rounded flex items-center gap-2">
+          <Link
+            to="/pengaturan/tarif-listrik/edit"
+            className="text-xs backdrop-blur bg-gray-400 hover:bg-gray-200 text-gray-900 font-medium py-2 px-4 rounded flex items-center gap-2"
+          >
             <AdjustmentsHorizontalIcon className="size-4" /> Sesuaikan Tarif
-          </Button>
+          </Link>
         </div>
       </LayoutPerangkatCard>
     );

@@ -34,7 +34,7 @@ export async function updateTarifListrik(
       "Content-Type": "application/json",
     },
     data: JSON.stringify({
-      name: props.data.harga,
+      harga: props.data.harga,
     }),
   };
 

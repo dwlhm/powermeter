@@ -6,6 +6,7 @@ import {
   LayoutBasicMainPanel,
 } from "@/common";
 import {
+  BoltIcon,
   BuildingLibraryIcon,
   BuildingOffice2Icon,
   BuildingOfficeIcon,
@@ -37,6 +38,11 @@ const menu: CompSideNavProps[] = [
     link: "/pengaturan/powermeter",
     icon: <CubeIcon className="size-5" />,
   },
+  {
+    label: "Tarif Listrik",
+    link: "/pengaturan/tarif-listrik",
+    icon: <BoltIcon className="size-5" />
+  }
 ];
 
 function Pengaturan() {

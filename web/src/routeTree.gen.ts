@@ -31,6 +31,9 @@ const authPerangkatPerangkatIdLazyImport = createFileRoute(
 const authPengaturanUnitLazyImport = createFileRoute(
   '/__auth/pengaturan/unit',
 )()
+const authPengaturanTarifListrikLazyImport = createFileRoute(
+  '/__auth/pengaturan/tarif-listrik',
+)()
 const authPengaturanPowermeterLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter',
 )()
@@ -60,6 +63,9 @@ const authPengaturanUnitBaruLazyImport = createFileRoute(
 )()
 const authPengaturanUnitUnitIdLazyImport = createFileRoute(
   '/__auth/pengaturan/unit/$unitId',
+)()
+const authPengaturanTarifListrikEditLazyImport = createFileRoute(
+  '/__auth/pengaturan/tarif-listrik/edit',
 )()
 const authPengaturanPowermeterBaruLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter/baru',
@@ -196,6 +202,17 @@ const authPengaturanUnitLazyRoute = authPengaturanUnitLazyImport
     import('./routes/__auth/pengaturan/unit.lazy').then((d) => d.Route),
   )
 
+const authPengaturanTarifListrikLazyRoute = authPengaturanTarifListrikLazyImport
+  .update({
+    path: '/tarif-listrik',
+    getParentRoute: () => authPengaturanLazyRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/__auth/pengaturan/tarif-listrik.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const authPengaturanPowermeterLazyRoute = authPengaturanPowermeterLazyImport
   .update({
     path: '/powermeter',
@@ -300,6 +317,18 @@ const authPengaturanUnitUnitIdLazyRoute = authPengaturanUnitUnitIdLazyImport
   .lazy(() =>
     import('./routes/__auth/pengaturan/unit/$unitId.lazy').then((d) => d.Route),
   )
+
+const authPengaturanTarifListrikEditLazyRoute =
+  authPengaturanTarifListrikEditLazyImport
+    .update({
+      path: '/edit',
+      getParentRoute: () => authPengaturanTarifListrikLazyRoute,
+    } as any)
+    .lazy(() =>
+      import('./routes/__auth/pengaturan/tarif-listrik/edit.lazy').then(
+        (d) => d.Route,
+      ),
+    )
 
 const authPengaturanPowermeterBaruLazyRoute =
   authPengaturanPowermeterBaruLazyImport
@@ -588,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authPengaturanPowermeterLazyImport
       parentRoute: typeof authPengaturanLazyImport
     }
+    '/__auth/pengaturan/tarif-listrik': {
+      id: '/__auth/pengaturan/tarif-listrik'
+      path: '/tarif-listrik'
+      fullPath: '/pengaturan/tarif-listrik'
+      preLoaderRoute: typeof authPengaturanTarifListrikLazyImport
+      parentRoute: typeof authPengaturanLazyImport
+    }
     '/__auth/pengaturan/unit': {
       id: '/__auth/pengaturan/unit'
       path: '/unit'
@@ -657,6 +693,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pengaturan/powermeter/baru'
       preLoaderRoute: typeof authPengaturanPowermeterBaruLazyImport
       parentRoute: typeof authPengaturanPowermeterLazyImport
+    }
+    '/__auth/pengaturan/tarif-listrik/edit': {
+      id: '/__auth/pengaturan/tarif-listrik/edit'
+      path: '/edit'
+      fullPath: '/pengaturan/tarif-listrik/edit'
+      preLoaderRoute: typeof authPengaturanTarifListrikEditLazyImport
+      parentRoute: typeof authPengaturanTarifListrikLazyImport
     }
     '/__auth/pengaturan/unit/$unitId': {
       id: '/__auth/pengaturan/unit/$unitId'
@@ -844,6 +887,10 @@ export const routeTree = rootRoute.addChildren({
                 ),
             }),
           authPengaturanPowermeterBaruLazyRoute,
+        }),
+      authPengaturanTarifListrikLazyRoute:
+        authPengaturanTarifListrikLazyRoute.addChildren({
+          authPengaturanTarifListrikEditLazyRoute,
         }),
       authPengaturanUnitLazyRoute: authPengaturanUnitLazyRoute.addChildren({
         authPengaturanUnitUnitIdLazyRoute:
