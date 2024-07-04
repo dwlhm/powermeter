@@ -74,3 +74,26 @@ export async function getPerangkatDataArsip(
   return data;
 
 }
+
+export type EnergyConsumption = {
+  energy: number,
+  timestamp: string
+}
+
+export async function getEnergyConsumptionInfo(
+  context: QueryFunctionContext
+): Promise<Api<EnergyConsumption[]>> {
+  const config: AxiosRequestConfig = {
+    method: "get",
+    url: `${import.meta.env.VITE_BACKEND_URL}/data/${context.queryKey[2]}/consumption`,
+    headers: {
+      Authorization: `Bearer ${context.queryKey[1]}`,
+    },
+    params: {
+      year: context.queryKey[3],
+    },
+  };
+
+  const { data } = await axios(config);
+  return data;
+}

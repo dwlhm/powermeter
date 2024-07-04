@@ -105,7 +105,7 @@ function PreviewPerangkat() {
         </PerangkatSubHeadingPanel>
         <Outlet />
         <MatchRoute to="/perangkat/$perangkatId">
-          <PerangkatEnergyOverview />
+          <PerangkatEnergyOverview token={user.token} perangkatId={perangkatId} />
         </MatchRoute>
       </>
     );

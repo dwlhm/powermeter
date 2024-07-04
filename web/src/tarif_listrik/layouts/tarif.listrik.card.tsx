@@ -1,12 +1,15 @@
 import { PerangkatSubTitle } from "@/perangkat/components";
 import { LayoutPerangkatCard } from "@/perangkat/layouts";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { useQueryTarifListrik } from "../hooks";
 import { CompLoading, LayoutError } from "@/common";
 import { Link } from "@tanstack/react-router";
+import { UseQueryResult } from "react-query";
+import { Api } from "@/api/internal";
+import { TarifListrik } from "../api";
+import { AxiosError } from "axios";
 
-export const TarifListrikCard = (props: { token: string | null }) => {
-  const tarifListrik = useQueryTarifListrik(props.token);
+export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik>, AxiosError> }) => {
+  const tarifListrik = props.tarif
 
   if (tarifListrik.isLoading) return <CompLoading />;
 
@@ -20,7 +23,7 @@ export const TarifListrikCard = (props: { token: string | null }) => {
 
   if (tarifListrik.isSuccess)
     return (
-      <LayoutPerangkatCard>
+      <LayoutPerangkatCard className="bg-gray-100 text-gray-900">
         <PerangkatSubTitle>Tarif Listrik</PerangkatSubTitle>
         <div className="flex gap-2 py-5">
           <p>Rp</p>
@@ -29,7 +32,7 @@ export const TarifListrikCard = (props: { token: string | null }) => {
             <span className="text-base font-normal"> / kWh</span>
           </p>
         </div>
-        <p className="text-xs italic text-gray-100/50">
+        <p className="text-xs italic text-gray-900/50">
           Terakhir diperbaharui pada:{" "}
           {!tarifListrik.data.results.updated_at
             ? new Date(
@@ -40,7 +43,7 @@ export const TarifListrikCard = (props: { token: string | null }) => {
         <div className="flex justify-end mt-5">
           <Link
             to="/pengaturan/tarif-listrik/edit"
-            className="text-xs backdrop-blur bg-gray-400 hover:bg-gray-200 text-gray-900 font-medium py-2 px-4 rounded flex items-center gap-2"
+            className="text-xs backdrop-blur bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-2 px-4 rounded flex items-center gap-2"
           >
             <AdjustmentsHorizontalIcon className="size-4" /> Sesuaikan Tarif
           </Link>

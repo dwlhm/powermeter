@@ -108,6 +108,17 @@ def data_action_avg(interval: str, id:str, config: any):
         config=config
     )
 
+def get_consumption(device_id: str, year: int, config: any):
+    sql = """SELECT timestamp, active_power::NUMERIC(10,2) FROM data_monthly 
+             WHERE device_id = %s AND
+             date_part('year', timestamp) = %s LIMIT 12"""
+    
+    return get_db(
+        sql=sql,
+        param=(base64.b64decode(device_id).decode(), year, ),
+        config=config
+    )
+
 
 def get_date(mode_id: str):
     match mode_id:

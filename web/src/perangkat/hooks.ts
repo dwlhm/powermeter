@@ -3,8 +3,10 @@ import { AxiosError } from "axios";
 import { UseQueryResult, useQuery } from "react-query";
 import {
   DetailPerangkat,
+  EnergyConsumption,
   PerangkatData,
   getDetailPerangkat,
+  getEnergyConsumptionInfo,
   getPerangkatData,
   getPerangkatDataArsip,
 } from "./api";
@@ -73,3 +75,17 @@ export const useQueryPerangkatArsipData = (
     refetchInterval: false,
     refetchOnMount: false,
   });
+
+  export type UseQueryEnergyConsumptionProps = {
+    token: string | null;
+    perangkatId: string;
+    year?: number;
+  }
+
+  export const useQueryEnergyConsumption = (
+    q: UseQueryEnergyConsumptionProps,
+  ): UseQueryResult<Api<EnergyConsumption[]>, AxiosError> => useQuery({
+    queryKey: [`energy.${q.perangkatId}`, q.token, q.perangkatId, q.year],
+    queryFn: getEnergyConsumptionInfo,
+    retry: false
+  })
