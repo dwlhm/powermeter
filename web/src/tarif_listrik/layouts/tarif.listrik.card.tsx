@@ -23,7 +23,7 @@ export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik
 
   if (tarifListrik.isSuccess)
     return (
-      <LayoutPerangkatCard className="bg-gray-100 text-gray-900">
+      <div className="rounded py-4 px-5 bg-gray-100 text-gray-900">
         <PerangkatSubTitle>Tarif Listrik</PerangkatSubTitle>
         <div className="flex gap-2 py-5">
           <p>Rp</p>
@@ -48,6 +48,6 @@ export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik
             <AdjustmentsHorizontalIcon className="size-4" /> Sesuaikan Tarif
           </Link>
         </div>
-      </LayoutPerangkatCard>
+      </div>
     );
 };
