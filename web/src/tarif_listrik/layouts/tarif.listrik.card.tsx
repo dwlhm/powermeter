@@ -1,5 +1,4 @@
 import { PerangkatSubTitle } from "@/perangkat/components";
-import { LayoutPerangkatCard } from "@/perangkat/layouts";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { CompLoading, LayoutError } from "@/common";
 import { Link } from "@tanstack/react-router";
