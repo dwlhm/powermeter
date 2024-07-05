@@ -70,7 +70,7 @@ if __name__ == "__main__":
     if devices.get("error"):
         print("Error: ", devices.get("error"))
 
-    ptr = datetime.now().hour()
+    ptr = datetime.now().hour
 
     doAvg(devices=devices, ptr=ptr)
 
