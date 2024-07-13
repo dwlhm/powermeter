@@ -5,7 +5,7 @@ import {
   PerangkatSubTitle,
 } from "../components";
 import { TarifListrikCard } from "@/tarif_listrik/layouts/tarif.listrik.card";
-import { useQueryEnergyConsumption, useQueryPerangkatData } from "../hooks";
+import { useQueryEnergyConsumption } from "../hooks";
 import { CompLoading, LayoutError } from "@/common";
 import { useQueryTarifListrik } from "@/tarif_listrik/hooks";
 import { TagihanCard } from "./perangkat.tagihan.card";

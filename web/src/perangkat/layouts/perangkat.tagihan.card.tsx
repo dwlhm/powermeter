@@ -4,7 +4,6 @@ import { EnergyConsumption } from "../api";
 import { AxiosError } from "axios";
 import { LayoutPerangkatCard } from "./perangkat.card";
 import { PerangkatSubTitle } from "../components";
-import { PerangkatData } from "../api.ts"
 
 export const TagihanCard = (props: {
   data: UseQueryResult<Api<EnergyConsumption[]>, AxiosError>;
