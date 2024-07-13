@@ -11,12 +11,14 @@ import { EnergyConsumption } from "../api";
 import { PerangkatSubTitle } from "../components";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 
+const str_bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+
 export const PerangkatEnergyChartCard = (props: {
   data: EnergyConsumption[];
 }) => {
   const data: EnergyConsumption[] = props.data.map((v) => ({
     energy: v.energy,
-    timestamp: new Date(v.timestamp).toLocaleDateString(),
+    timestamp: str_bulan[new Date(v.timestamp).getMonth()],
   }));
   return (
     <div>

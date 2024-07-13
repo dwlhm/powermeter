@@ -5,7 +5,7 @@ import {
   PerangkatSubTitle,
 } from "../components";
 import { TarifListrikCard } from "@/tarif_listrik/layouts/tarif.listrik.card";
-import { useQueryEnergyConsumption } from "../hooks";
+import { useQueryEnergyConsumption, useQueryPerangkatData } from "../hooks";
 import { CompLoading, LayoutError } from "@/common";
 import { useQueryTarifListrik } from "@/tarif_listrik/hooks";
 import { TagihanCard } from "./perangkat.tagihan.card";
@@ -20,6 +20,12 @@ export default function PerangkatEnergyOverview(props: {
     year: new Date().getFullYear(),
   });
   const tarif = useQueryTarifListrik(props.token);
+  const latest = useQueryPerangkatData({
+    token: props.token,
+    perangkatId: props.perangkatId,
+    limit: 1,
+    interval: 'realtime'
+    })
   return (
     <>
       <PerangkatSubHeadingPanel withoutBackBtn={true}>
@@ -29,8 +35,8 @@ export default function PerangkatEnergyOverview(props: {
         </PerangkatSubTitle>
       </PerangkatSubHeadingPanel>
       <PerangkatSubBody>
-        <div className="grid grid-cols-4 gap-4 w-full">
-          <TagihanCard data={energy} tarif={tarif.data?.results.harga} />
+        <div className="grid grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+          <TagihanCard data={latest} tarif={tarif.data?.results.harga} />
           <TarifListrikCard tarif={tarif} />
         </div>
         <div>

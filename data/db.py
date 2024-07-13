@@ -117,7 +117,10 @@ def data_action_avg(interval: str, id:str, point: int, config: any):
 def get_consumption(device_id: str, year: int, config: any):
     sql = """SELECT timestamp, active_power::NUMERIC(10,2) FROM data_monthly 
              WHERE device_id = %s AND
-             date_part('year', timestamp) = %s LIMIT 12"""
+             date_part('year', timestamp) = %s LIMIT 12
+             UNION
+             SELECT DISTINCT ON (id) timestamp, active_power::NUMERIC(10,2) FROM data
+             WHERE device_id = %s ORDER BY id DESC"""
     
     return get_db(
         sql=sql,
