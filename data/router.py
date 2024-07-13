@@ -156,6 +156,7 @@ async def get_data_konsumsi_listrik(id: str, year: int = None):
     if result.get("error"):
         return HTTPException(status_code=400, detail=result.get("error"))
     data = result.get("data")
+    print("data: ", data)
     res = []
 
     for item in data:
