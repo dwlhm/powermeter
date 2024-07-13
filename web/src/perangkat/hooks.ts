@@ -87,5 +87,6 @@ export const useQueryPerangkatArsipData = (
   ): UseQueryResult<Api<EnergyConsumption[]>, AxiosError> => useQuery({
     queryKey: [`energy.${q.perangkatId}`, q.token, q.perangkatId, q.year],
     queryFn: getEnergyConsumptionInfo,
-    retry: false
+    retry: false,
+    refetchInterval: 120000,
   })
