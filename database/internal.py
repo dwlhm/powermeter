@@ -44,7 +44,7 @@ def upsert(sql, param, config):
             "error": str(Error)
         }
         
-def delete(sql, param):
+def delete(sql, param, config):
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
@@ -52,9 +52,6 @@ def delete(sql, param):
 
                 conn.commit()
                 
-                if (d == None): return {
-                    "error": "no data"
-                }
                 return {
                     "data": True
                 }

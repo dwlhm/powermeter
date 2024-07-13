@@ -68,21 +68,27 @@ def get_data_with_limit(interval, id, limit, config):
         param=( base64.b64decode(id).decode(), limit, ), 
         config=config)
 
-def data_action_avg(interval: str, id:str, config: any):
+def data_action_avg(interval: str, id:str, point: int, config: any):
 
     mode_name = "data_" + interval
     ref = "data"
+    intv = "hour"
     match interval:
         case "hourly":
             ref = "data"
+            intv = "hour"
         case "daily":
             ref = "data_hourly"
+            intv = "day"
         case "weekly":
             ref = "data_daily"
+            intv = "week"
         case "monthly":
             ref = "data_weekly"
+            intv = "month"
         case "yearly":
             ref = "data_monthly"
+            intv = "year"
         case _:
             return {
                 "error": "invalid interval"
@@ -104,7 +110,7 @@ def data_action_avg(interval: str, id:str, config: any):
 
     return upsert_db(
         sql=sql.SQL(sql_update_avg_row).format(table_name=sql.Identifier(mode_name), table_ref=sql.Identifier(ref)),
-        param=(base64.b64decode(id).decode(), date.get("to"), main_row_id, ),
+        param=(base64.b64decode(id).decode(), point, main_row_id, ),
         config=config
     )
 
@@ -561,7 +567,7 @@ sql_update_avg_row = """UPDATE {table_name}
                 timestamp
                 FROM {table_ref}
                 WHERE device_id = %s AND
-                timestamp <= cast(%s AS TIMESTAMPTZ)
+                DATE_PART('hour', timestamp) = %s
                 ORDER BY id DESC
                 LIMIT 1) AS sq
         WHERE id = %s
