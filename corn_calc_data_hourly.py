@@ -6,75 +6,6 @@ from device.db import get_all as get_all_perangkat
 from configuration.config import load_config
 from database.internal import get as get_db, upsert as upsert_db
 
-sql_check_data = """SELECT id
-             FROM data
-             WHERE device_id = %s AND
-             DATE_PART('hour', timestamp) = %s AND
-             active_power IS NOT NULL
-             ORDER BY id DESC LIMIT 1"""
-
-
-def doAvg(devices, ptr):
-    for device in devices.get("data"):
-        id = device.get("id")
-
-        check_data = get_db(
-            sql=sql_check_data,
-            param=(
-                base64.b64decode(id).decode(),
-                ptr,
-            ),
-            config=load_config(),
-        )
-
-        if check_data.get("error"):
-            print("Error: ", check_data.get("error"), " / ", device.get("id"))
-            continue
-
-        latest_id_raw = check_data.get("data")
-
-        if len(latest_id_raw) == 0:
-            print("Error: ", "no data", " / ", device.get("id"))
-            continue
-
-        latest_id = latest_id_raw[0][0]
-
-        insert_avg_data = upsert_db(
-            sql=sql_copy_avg,
-            param=(base64.b64decode(id).decode(), base64.b64decode(id).decode(), ptr),
-            config=load_config(),
-        )
-
-        if insert_avg_data.get("error"):
-            print("Error: ", insert_avg_data.get("error"), " / ", device.get("id"))
-            continue
-
-        inserted_id = insert_avg_data.get("data")[0]
-
-        data = upsert_db(
-            sql=sql_update_avg_row,
-            param=(latest_id, inserted_id),
-            config=load_config(),
-        )
-        if data.get("error"):
-            print("Error: ", data.get("error"), " / ", device.get("id"))
-            continue
-
-        if data.get("data"):
-            data = data.get("data")
-            print(f"data location: {data[0]} / {device.get("id")}")
-
-
-if __name__ == "__main__":
-    devices = get_all_perangkat(config=load_config())
-    if devices.get("error"):
-        print("Error: ", devices.get("error"))
-
-    ptr = datetime.now().hour
-
-    doAvg(devices=devices, ptr=ptr)
-
-
 sql_copy_avg = """INSERT INTO data_hourly (
         phase_voltage_a,
         phase_voltage_b,
@@ -166,6 +97,9 @@ sql_copy_avg = """INSERT INTO data_hourly (
         NOW()
              FROM data
              WHERE device_id = %s AND
+             DATE_PART('year', timestamp) = %s AND
+             DATE_PART('month', timestamp) = %s AND
+             DATE_PART('day', timestamp) = %s AND
              DATE_PART('hour', timestamp) = %s
         RETURNING id
              """
@@ -198,3 +132,86 @@ sql_update_avg_row = """UPDATE data_hourly
                 WHERE id = %s) AS sq
         WHERE id = %s
         RETURNING id"""
+sql_check_data = """SELECT id
+             FROM data
+             WHERE device_id = %s AND
+             DATE_PART('year', timestamp) = %s AND
+             DATE_PART('month', timestamp) = %s AND
+             DATE_PART('day', timestamp) = %s AND
+             DATE_PART('hour', timestamp) = %s AND
+             active_power IS NOT NULL
+             ORDER BY id DESC LIMIT 1"""
+
+
+def doAvg(devices, year, month, day, hour):
+    for device in devices.get("data"):
+        id = device.get("id")
+
+        check_data = get_db(
+            sql=sql_check_data,
+            param=(
+                base64.b64decode(id).decode(),
+                year,
+                month,
+                day,
+                hour,
+            ),
+            config=load_config(),
+        )
+
+        if check_data.get("error"):
+            print("Error: ", check_data.get("error"), " / ", device.get("id"))
+            continue
+
+        latest_id_raw = check_data.get("data")
+
+        if len(latest_id_raw) == 0:
+            print("Error: ", "no data", " / ", device.get("id"))
+            continue
+
+        latest_id = latest_id_raw[0][0]
+
+        insert_avg_data = upsert_db(
+            sql=sql_copy_avg,
+            param=(base64.b64decode(id).decode(), base64.b64decode(id).decode(), year, month, day, hour, ),
+            config=load_config(),
+        )
+
+        if insert_avg_data.get("error"):
+            print("Error: ", insert_avg_data.get("error"), " / ", device.get("id"))
+            continue
+
+        inserted_id = insert_avg_data.get("data")[0]
+
+        data = upsert_db(
+            sql=sql_update_avg_row,
+            param=(latest_id, inserted_id),
+            config=load_config(),
+        )
+        if data.get("error"):
+            print("Error: ", data.get("error"), " / ", device.get("id"))
+            continue
+
+        if data.get("data"):
+            data = data.get("data")
+            print(f"data location: {data[0]} / {device.get("id")}")
+
+
+if __name__ == "__main__":
+    devices = get_all_perangkat(config=load_config())
+    if devices.get("error"):
+        print("Error: ", devices.get("error"))
+
+    i_time = datetime.now()
+    ptr = i_time.hour
+
+    doAvg(
+        devices=devices, 
+        year=i_time.year,
+        month=i_time.month,
+        day=i_time.day,
+        hour=i_time.hour,
+    )
+
+
+
