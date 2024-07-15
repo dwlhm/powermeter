@@ -289,15 +289,16 @@ def get_device_logs(device_id: str, config):
 
 def set_device_status(device_id: str, status: bool, config):
     sql = """INSERT INTO device_status (device, status, update_at)
-             VALUES (%s, %s, %s)
+             VALUES (%s, %s, NOW())
              ON CONFLICT(device)
              DO UPDATE SET
-                status = EXCLUDED.status"""
+                status = EXCLUDED.status,
+                update_at = NOW()"""
     
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
-                cur.execute(sql, (base64.b64decode(device_id).decode(), status, datetime.now(), ))
+                cur.execute(sql, (base64.b64decode(device_id).decode(), status, ))
                 conn.commit()
 
                 return {
