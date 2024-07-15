@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 
 from data import db
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     if devices.get("error"):
         print("Error: ", devices.get("error"))
 
-    i_time = datetime.now()
+    i_time = datetime.now() - timedelta(hours=1)
     ptr = i_time.hour
 
     doAvg(
