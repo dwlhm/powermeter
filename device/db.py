@@ -256,11 +256,13 @@ def insert_device_logs(device_id: str, type: str, message: str, config):
     
 def get_device_logs(device_id: str, config):
     sql = """SELECT type, message, created_at FROM device_logs
-             WHERE device = %s"""
+             WHERE device = %s AND
+             DATE_PART('month', created_at) = %s
+             ORDER BY id DESC"""
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
-                cur.execute(sql, (str(base64.b64decode(device_id).decode()), ))
+                cur.execute(sql, (str(base64.b64decode(device_id).decode()), datetime.now().month, ))
 
                 d = cur.fetchall()
 
