@@ -478,6 +478,13 @@ def create_tables():
             created_at TIMESTAMPTZ NOT NULL,
             updated_at TIMESTAMPTZ
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS user_seasons (
+            id SERIAL PRIMARY KEY,
+            user_id INT NOT NULL,
+            token VARCHAR(255) NOT NULL
+        )
         """
     )
     config_db = config.load_config()
