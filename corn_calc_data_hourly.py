@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import base64
 
-from data import db
 from device.db import get_all as get_all_perangkat
 from configuration.config import load_config
 from database.internal import get as get_db, upsert as upsert_db
@@ -212,6 +211,3 @@ if __name__ == "__main__":
         day=i_time.day,
         hour=i_time.hour,
     )
-
-
-
