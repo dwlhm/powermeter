@@ -45,7 +45,8 @@ function Dashboard() {
         <Outlet />
       </>
     );
-  if (isError)
+  if (isError) {
+    if (error.response?.status == 401) 
     return (
       <>
         <LayoutError
@@ -63,6 +64,7 @@ function Dashboard() {
         <Outlet />
       </>
     );
+  }
   if (isSuccess)
     return (
       <div

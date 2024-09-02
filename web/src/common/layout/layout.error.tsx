@@ -1,4 +1,5 @@
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { Link } from "@tanstack/react-router";
 import { AxiosError } from "axios";
 
 export const LayoutError = (props: {
@@ -7,6 +8,7 @@ export const LayoutError = (props: {
   action?: React.ReactNode | null;
   className?: string;
 }) => {
+  console.log("error", props.message)
   const err_msg: string | string[] =
     typeof props.message == "string"
       ? props.message
@@ -22,7 +24,17 @@ export const LayoutError = (props: {
       <p className="italic text-red-800 text-base">
         {typeof err_msg == "string" ? err_msg : "system error"}
       </p>
-      {props.action}
+      {typeof props.message != "string" &&
+      (props.message as AxiosError).response?.status == 401 ? (
+        <Link
+          to={"/login"}
+          className="bg-blue-900 py-1 px-3 rounded text-white transition hover:bg-blue-900/80"
+        >
+          Login
+        </Link>
+      ) : (
+        props.action
+      )}
     </div>
   );
-}
+};
