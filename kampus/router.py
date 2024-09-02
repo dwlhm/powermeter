@@ -3,6 +3,7 @@ from typing import Annotated
 from pydantic import BaseModel
 import base64
 
+from user.internal import get_current_user
 from dependencies import oauth2_scheme
 from configuration.config import load_config
 from .db import get_all, new, get_by_id, update, remove
@@ -11,14 +12,14 @@ from .db import get_all, new, get_by_id, update, remove
 router = APIRouter(
     prefix="/kampus",
     tags=["Kampus"],
-    dependencies=[Depends(oauth2_scheme)]
+    dependencies=[Depends(get_current_user)]
 )
 
 class Kampus(BaseModel):
     name: str
 
 @router.get("/")
-async def get_all_kampus(token: str = Depends(oauth2_scheme)):
+async def get_all_kampus():
     result = get_all(load_config())
     if (result.get("error")): raise HTTPException(
             status_code=400,
