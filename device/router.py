@@ -3,6 +3,7 @@ from typing import Annotated
 from pydantic import BaseModel
 import base64
 
+from user.internal import get_current_user
 from dependencies import oauth2_scheme
 from configuration.config import load_config
 from .db import get_all, new, get_by_id, update, remove, get_latest_data, get_device_logs
@@ -11,7 +12,7 @@ from .db import get_all, new, get_by_id, update, remove, get_latest_data, get_de
 router = APIRouter(
     prefix="/device",
     tags=["Perangkat"],
-    dependencies=[Depends(oauth2_scheme)]
+    dependencies=[Depends(get_current_user)]
 )
 
 class Perangkat(BaseModel):
@@ -22,7 +23,7 @@ class Perangkat(BaseModel):
     powermeter: str
 
 @router.get("/")
-async def get_all_perangkat(token: str = Depends(oauth2_scheme)):
+async def get_all_perangkat():
     result = get_all(load_config())
     if (result.get("error")): raise HTTPException(
             status_code=400,

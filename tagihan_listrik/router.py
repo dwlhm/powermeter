@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from dependencies import oauth2_scheme
+from user.internal import get_current_user
 from configuration.config import load_config
 from .db import get_tarif, update_tarif
 
 router = APIRouter(
     prefix="/tarif-listrik",
     tags=["Tarif Listrik"],
-    dependencies=[Depends(oauth2_scheme)]
+    dependencies=[Depends(get_current_user)]
 )
 
 @router.get("/")
