@@ -30,7 +30,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         exp_timestamp = payload.get("exp")
         if exp_timestamp:
             exp_datetime = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
-            if exp_dateime > datetime.now(timezone.utc):
+            print(exp_datetime)
+            print(datetime.now(timezone.utc))
+            if exp_datetime < datetime.now(timezone.utc):
                 raise credentials_exception
         if username is None:
             raise credentials_exception

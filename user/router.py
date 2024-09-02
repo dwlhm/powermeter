@@ -20,11 +20,18 @@ def insert_new_user(user: User):
 	data = insert_new_user(user, config_db)
 	return {"status": "success", "results": user}
 
-@router.get("/me/", response_model=User)
+@router.get("/me/")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    return current_user
+    return {
+        "status": "success",
+        "results": {
+            "username": current_user[0],
+            "email": current_user[1],
+            "token": current_user[2],
+        },
+    }
 
 @router.get("/")
 def get_all_users(token: Annotated[str, Depends(oauth2_scheme)]):
