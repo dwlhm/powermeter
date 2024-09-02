@@ -1,7 +1,9 @@
 import * as React from 'react'
-import { useMutation } from 'react-query'
-import { doLogin } from './api/users'
+import { useMutation, useQuery } from 'react-query'
+import { doLogin, getProfile, UserProfile } from './api/users'
 import { Login } from './api/users'
+import { Api } from './api/internal'
+import { AxiosError } from 'axios'
 
 export interface AuthContext {
     isAuthenticated: boolean
@@ -48,7 +50,15 @@ function setStoredToken(token: string | null) {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = React.useState<string | null>(getStoredToken())
-    const isAuthenticated = !!token
+    let isAuthenticated = !!token
+    if (isAuthenticated) {
+        const { isError } = useQuery<Api<UserProfile>, AxiosError>({
+            queryKey: ['user.profile', token],
+            queryFn: getProfile,
+            retry: 0
+        }) 
+        if (isError) isAuthenticated = false
+    }
     const mutation = useMutation({
         mutationFn: doLogin,
     })
