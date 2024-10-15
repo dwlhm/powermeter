@@ -34,9 +34,9 @@ function AuthLayout() {
     return (
         <>
           <Navbar logout={handleLogout} />
-          {/* <div className="mx-auto "> */}
+          <div className="mt-16 h-[calc(100vh-64px)]">
             <Outlet />
-          {/* </div> */}
+          </div>
         </>
       )
 }

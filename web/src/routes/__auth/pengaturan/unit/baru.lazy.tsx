@@ -53,7 +53,6 @@ function UnitBaru() {
       },
       {
         onSuccess: (res: AxiosResponse<Api<Unit>, any>) => {
-          console.log(res)
           const unitId = res.data.results.id as string
           setIsSubmitting(false)
           router.invalidate()

@@ -73,7 +73,6 @@ function PerangkatBaru() {
         },
         {
           onSuccess: (res) => {
-            console.log("perangkat baru", res);
             setIsSubmitting(false);
             router.invalidate();
             navigate({ to: "/perangkat" });

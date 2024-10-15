@@ -25,7 +25,7 @@ function PowermeterRegister() {
   const pmData = pmRepo?.results.find((item) => item.id == powermeterId);
   return (
     <div className="fixed inset-0 flex justify-center items-center z-20">
-      <div className="bg-white rounded shadow-md w-full h-full p-3">
+      <div className="flex flex-col bg-white rounded shadow-md w-full h-full p-3">
         <header className="flex justify-between items-center my-2">
           <h3 className="text-lg font-medium">Data Register</h3>
           <Link
@@ -38,7 +38,7 @@ function PowermeterRegister() {
           </Link>
         </header>
 
-        <div className="my-3">
+        <div className="my-3 flex-grow flex flex-col h-[90vh]">
           <div>
             <p>
               <span className="text-sm text-black/50 italic block">
@@ -60,15 +60,17 @@ function PowermeterRegister() {
               Tambah Register
             </Link>
           </div>
-          <div className="register-table font-medium">
-            <p>Alamat (Desimal)</p>
-            <p>Pengkali</p>
-            <p>Besaran</p>
-            <p>Nama</p>
-            <p>Param</p>
+          <div className="flex-grow overflow-auto border rounded">
+            <div className="register-table font-medium">
+              <p>Alamat (Desimal)</p>
+              <p>Pengkali</p>
+              <p>Besaran</p>
+              <p>Nama</p>
+              <p>Param</p>
+            </div>
+            <Outlet />
+            <ListRegister auth={auth} powermeterId={powermeterId} />
           </div>
-          <Outlet />
-          <ListRegister auth={auth} powermeterId={powermeterId} />
         </div>
       </div>
     </div>

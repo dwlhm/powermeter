@@ -44,7 +44,6 @@ export async function newUnit(props: Token<Unit>) {
 }
 
 export async function updateUnit(props: Token<Unit>): Promise<Api<Unit>> {
-  console.log(props.data);
 
   const config = {
     method: "put",

@@ -40,7 +40,7 @@ export const PerangkatArsipRepresentation = (
 
   if (isSuccess)
     return (
-      <div className="mb-5 sm:max-w-[calc(100vw-20rem)] overflow-auto max-h-[calc(100vh-24rem)]">
+      <div className="mb-5 sm:max-w-[calc(100vw-20rem)] overflow-auto">
         <table className="table-auto border-collapse rounded overflow-hidden">
           <thead className="bg-gray-900">
             <tr className="text-gray-100">

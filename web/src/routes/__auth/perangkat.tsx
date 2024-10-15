@@ -68,10 +68,10 @@ function Dashboard() {
   if (isSuccess)
     return (
       <div
-        className={`flex grow w-full ${!perangkatId ? "bg-gray-200" : "bg-blue-900 flex-col sm:flex-row"}`}
+        className={`flex min-h-[calc(100vh-64px)] w-full ${!perangkatId ? "bg-gray-200" : "bg-blue-900 flex-col sm:flex-row"}`}
       >
         <div
-          className={`${perangkatId && `sm:max-w-64 relative sm:bottom-0 ${menu ? "h-[calc(100vh-3.9rem)] sticky top-16" : "sm:h-[calc(100vh-3.9rem)] sm:sticky sm:top-16"}`} w-full p-2 overflow-auto`}
+          className={`${perangkatId && `sm:max-w-64 relative sm:bottom-0 ${menu ? "h-[calc(100vh-64px)] sticky top-16" : "sm:h-[calc(100vh-64px)] sm:sticky sm:top-16"}`} w-full p-2 overflow-auto`}
         >
           {perangkatId && (
             <button

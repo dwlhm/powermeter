@@ -58,7 +58,7 @@ function EditPerangkat() {
   const mutation = useMutation({
     mutationFn: updateDevices,
     onError(error, _a, _b) {
-      console.log("ERROR", error);
+      console.error("ERROR", error);
     },
     onSettled: () => {
       queryClient.invalidateQueries({

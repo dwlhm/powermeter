@@ -97,8 +97,8 @@ export const PerangkatDataRepresentation = (
   if (q.isSuccess)
     return (
       <div className="grid sm:grid-cols-3 gap-2">
-        {props.register.map((item) => (
-          <LayoutPerangkatCard key={`i.c.${item[4]}`}>
+        {props.register.map((item,index) => (
+          <LayoutPerangkatCard key={`i.c.${item[4]}.${index}`}>
             <h4 className="text-base font-medium">{`${item[3]} ${item[2] !== " " ? `(${item[2]})` : ""}`}</h4>
             <div className="my-1 h-px bg-white/50 mb-2" />
 

@@ -57,9 +57,7 @@ function LoginComponent() {
   React.useEffect(() => {
     if (auth.isAuthenticated) {
       router.invalidate()
-
-      sleep(1)
-      console.log(auth)
+      
       navigate({ to: search.redirect || fallback })
     }
   }, [auth.isAuthenticated])

@@ -8,7 +8,6 @@ export const LayoutError = (props: {
   action?: React.ReactNode | null;
   className?: string;
 }) => {
-  console.log("error", props.message)
   const err_msg: string | string[] =
     typeof props.message == "string"
       ? props.message

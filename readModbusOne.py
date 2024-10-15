@@ -2,7 +2,7 @@ from pymodbus.client import ModbusTcpClient
 from time import sleep
 from device_registers.registers_repo import repo as registers
 
-ip_addr = "10.225.0.206"
+ip_addr = "10.225.0.204"
 port = 502
 pm_seri = "AW9L"
 

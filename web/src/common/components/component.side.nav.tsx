@@ -13,7 +13,7 @@ export const CompSideNav = (props: { data: CompSideNavProps[] }) => {
   const [menu, setMenu] = React.useState<boolean>(false);
   return (
     <div
-      className={`sm:max-w-64 sticky top-16 ${menu ? "h-[calc(100vh-3.9rem)] sticky top-16" : "sm:h-[calc(100vh-3.9rem)] sm:sticky sm:top-16"} w-full p-2 overflow-auto`}
+      className={`sm:max-w-64 sticky top-16 ${menu ? "h-[calc(100vh-64px)] sticky top-16" : "sm:h-[calc(100vh-64px)] sm:sticky sm:top-16"} w-full p-2 overflow-auto`}
     >
       <CompButton onClick={() => setMenu((prev) => !prev)} className="block sm:hidden mb-2">
         {!menu ? "Lihat Pengaturan Lain" : "Tutup"}

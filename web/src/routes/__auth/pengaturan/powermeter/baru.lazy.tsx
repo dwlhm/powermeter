@@ -44,7 +44,6 @@ function PowermeterBaru() {
       },
       {
         onSuccess: (res: AxiosResponse<Api<Powermeter>, any>) => {
-          console.log(res)
           const powermeterId = res.data.results.id as string
           setIsSubmitting(false)
           router.invalidate()
