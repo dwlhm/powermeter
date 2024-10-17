@@ -23,7 +23,7 @@ export const Route = createLazyFileRoute("/__auth/pengaturan/unit")({
 
 function PengaturanUnit() {
   const auth = useAuth();
-  const { unitId } = useParams<any>({ strict: false });
+  const { unitId } = useParams({ strict: false });
   const { isLoading, isError, error, isSuccess, data } = useQuery<
     Api<Unit[]>,
     AxiosError
@@ -66,7 +66,10 @@ function PengaturanUnit() {
               <>
                 <ChevronRightIcon className="w-6 h-6 inline" />{" "}
                 <span className="text-blue-900 font-medium">
-                  <Link to="/pengaturan/unit/$unitId" params={{ unitId }}>
+                  <Link
+                    to="/pengaturan/unit/$unitId"
+                    params={{ unitId: unitId ? unitId : "" }}
+                  >
                     {unit_id.name}
                   </Link>
                 </span>

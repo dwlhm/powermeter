@@ -20,7 +20,7 @@ export default function PerangkatEnergyOverview(props: {
     year: new Date().getFullYear(),
   });
   const tarif = useQueryTarifListrik(props.token);
-  
+
   return (
     <>
       <PerangkatSubHeadingPanel withoutBackBtn={true}>
@@ -30,7 +30,7 @@ export default function PerangkatEnergyOverview(props: {
         </PerangkatSubTitle>
       </PerangkatSubHeadingPanel>
       <PerangkatSubBody>
-<div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
           <TagihanCard data={energy} tarif={tarif.data?.results.harga} />
           <TarifListrikCard tarif={tarif} />
         </div>

@@ -1,5 +1,5 @@
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { AxiosError } from "axios";
 
 export const LayoutError = (props: {
@@ -8,6 +8,16 @@ export const LayoutError = (props: {
   action?: React.ReactNode | null;
   className?: string;
 }) => {
+  const navigate = useNavigate();
+  if ((props.message as AxiosError).response?.status == 401) {
+    navigate({
+      to: "/login",
+      search: {
+        redirect: location.pathname,
+      },
+    });
+    return <p>Redirect...</p>;
+  }
   const err_msg: string | string[] =
     typeof props.message == "string"
       ? props.message

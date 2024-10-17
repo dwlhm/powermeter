@@ -23,7 +23,7 @@ export const Route = createLazyFileRoute("/__auth/pengaturan/kampus")({
 
 function Kampus() {
   const auth = useAuth();
-  const { kampusId } = useParams<any>({ strict: false });
+  const { kampusId } = useParams({ strict: false });
   const { isLoading, isError, error, isSuccess, data } = useQuery<
     Api<KampusInf[]>,
     AxiosError
@@ -67,7 +67,10 @@ function Kampus() {
               <>
                 <ChevronRightIcon className="w-6 h-6 inline" />{" "}
                 <span className="text-blue-900 font-medium">
-                  <Link to="/pengaturan/kampus/$kampusId" params={{ kampusId }}>
+                  <Link
+                    to="/pengaturan/kampus/$kampusId"
+                    params={{ kampusId: kampusId as string }}
+                  >
                     {kampus_id.name}
                   </Link>
                 </span>

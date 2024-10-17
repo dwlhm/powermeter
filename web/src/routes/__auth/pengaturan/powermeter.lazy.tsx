@@ -20,7 +20,7 @@ export const Route = createLazyFileRoute("/__auth/pengaturan/powermeter")({
 
 function PengaturanPowermeter() {
   const auth = useAuth();
-  const { powermeterId } = useParams<any>({ strict: false });
+  const { powermeterId } = useParams({ strict: false });
   const { isLoading, isError, error, isSuccess, data } = useQuery<
     Api<Powermeter[]>,
     AxiosError
@@ -66,7 +66,7 @@ function PengaturanPowermeter() {
                 <span className="text-blue-900 font-medium">
                   <Link
                     to="/pengaturan/powermeter/$powermeterId"
-                    params={{ powermeterId }}
+                    params={{ powermeterId: powermeterId as string }}
                   >
                     {powermeter_data.seri}
                   </Link>

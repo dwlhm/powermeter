@@ -8,7 +8,6 @@ import {
 import { z } from 'zod'
 
 import { AuthContext, useAuth } from '../auth'
-import { sleep } from '../utils'
 
 const fallback = '/perangkat' as const
 
@@ -48,7 +47,6 @@ function LoginComponent() {
       await auth.login({ username: username, password: password})
       
     } catch (error) {
-      console.error('Error logging in: ', error)
     } finally {
       setIsSubmitting(false)
     }

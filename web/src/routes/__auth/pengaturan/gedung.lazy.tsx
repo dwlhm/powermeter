@@ -10,7 +10,10 @@ import {
 import { AxiosError } from "axios";
 import Loadings from "@/components/Loadings";
 import Errors from "@/components/Errors";
-import { BuildingOfficeIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  BuildingOfficeIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 import { Gedung, getGedung } from "@/api/gedung";
 import { LayoutCardPanel } from "@/common";
 
@@ -20,7 +23,7 @@ export const Route = createLazyFileRoute("/__auth/pengaturan/gedung")({
 
 function PengaturanGedung() {
   const auth = useAuth();
-  const { gedungId } = useParams<any>({ strict: false });
+  const { gedungId } = useParams({ strict: false });
   const { isLoading, isError, error, isSuccess, data } = useQuery<
     Api<Gedung[]>,
     AxiosError
@@ -63,7 +66,10 @@ function PengaturanGedung() {
               <>
                 <ChevronRightIcon className="w-6 h-6 inline" />{" "}
                 <span className="text-blue-900 font-medium">
-                  <Link to="/pengaturan/gedung/$gedungId" params={{ gedungId }}>
+                  <Link
+                    to="/pengaturan/gedung/$gedungId"
+                    params={{ gedungId: gedungId ? gedungId : "" }}
+                  >
                     {gedung_id.name}
                   </Link>
                 </span>

@@ -72,7 +72,7 @@ function PerangkatBaru() {
           data: payload,
         },
         {
-          onSuccess: (res) => {
+          onSuccess: () => {
             setIsSubmitting(false);
             router.invalidate();
             navigate({ to: "/perangkat" });
