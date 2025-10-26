@@ -12,6 +12,18 @@ export const TagihanCard = (props: {
   if (props.data.isSuccess) {
     const tagihan =
       props.data.data?.results[props.data.data?.results.length - 1];
+    
+    if (!tagihan || typeof tagihan.energy !== 'number') {
+      return (
+        <LayoutPerangkatCard>
+          <PerangkatSubTitle>Konsumsi Energi Bulan Ini</PerangkatSubTitle>
+          <div className="flex gap-2 py-5">
+            <p className="text-gray-500">Data energi tidak tersedia</p>
+          </div>
+        </LayoutPerangkatCard>
+      );
+    }
+    
     return (
       <LayoutPerangkatCard>
         <PerangkatSubTitle>Konsumsi Energi Bulan Ini</PerangkatSubTitle>
