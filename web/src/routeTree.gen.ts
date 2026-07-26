@@ -25,12 +25,16 @@ const authUsersLazyImport = createFileRoute('/__auth/users')()
 const authPengaturanLazyImport = createFileRoute('/__auth/pengaturan')()
 const authAboutLazyImport = createFileRoute('/__auth/about')()
 const authUsersRegisterLazyImport = createFileRoute('/__auth/users/register')()
+const authUsersBaruLazyImport = createFileRoute('/__auth/users/baru')()
 const authPerangkatBaruLazyImport = createFileRoute('/__auth/perangkat/baru')()
 const authPengaturanUnitLazyImport = createFileRoute(
   '/__auth/pengaturan/unit',
 )()
 const authPengaturanTarifListrikLazyImport = createFileRoute(
   '/__auth/pengaturan/tarif-listrik',
+)()
+const authPengaturanRoleLazyImport = createFileRoute(
+  '/__auth/pengaturan/role',
 )()
 const authPengaturanPowermeterLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter',
@@ -40,6 +44,9 @@ const authPengaturanKampusLazyImport = createFileRoute(
 )()
 const authPengaturanGedungLazyImport = createFileRoute(
   '/__auth/pengaturan/gedung',
+)()
+const authUsersUserIdEditLazyImport = createFileRoute(
+  '/__auth/users/$userId/edit',
 )()
 const authPerangkatPerangkatIdLogsLazyImport = createFileRoute(
   '/__auth/perangkat/$perangkatId/logs',
@@ -65,6 +72,9 @@ const authPengaturanUnitUnitIdLazyImport = createFileRoute(
 const authPengaturanTarifListrikEditLazyImport = createFileRoute(
   '/__auth/pengaturan/tarif-listrik/edit',
 )()
+const authPengaturanRoleBaruLazyImport = createFileRoute(
+  '/__auth/pengaturan/role/baru',
+)()
 const authPengaturanPowermeterBaruLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter/baru',
 )()
@@ -88,6 +98,9 @@ const authPengaturanUnitUnitIdHapusLazyImport = createFileRoute(
 )()
 const authPengaturanUnitUnitIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/unit/$unitId/edit',
+)()
+const authPengaturanRoleRoleIdEditLazyImport = createFileRoute(
+  '/__auth/pengaturan/role/$roleId/edit',
 )()
 const authPengaturanPowermeterPowermeterIdRegisterLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter/$powermeterId/register',
@@ -173,6 +186,13 @@ const authUsersRegisterLazyRoute = authUsersRegisterLazyImport
     import('./routes/__auth/users/register.lazy').then((d) => d.Route),
   )
 
+const authUsersBaruLazyRoute = authUsersBaruLazyImport
+  .update({
+    path: '/baru',
+    getParentRoute: () => authUsersLazyRoute,
+  } as any)
+  .lazy(() => import('./routes/__auth/users/baru.lazy').then((d) => d.Route))
+
 const authPerangkatBaruLazyRoute = authPerangkatBaruLazyImport
   .update({
     path: '/baru',
@@ -200,6 +220,15 @@ const authPengaturanTarifListrikLazyRoute = authPengaturanTarifListrikLazyImport
     import('./routes/__auth/pengaturan/tarif-listrik.lazy').then(
       (d) => d.Route,
     ),
+  )
+
+const authPengaturanRoleLazyRoute = authPengaturanRoleLazyImport
+  .update({
+    path: '/role',
+    getParentRoute: () => authPengaturanLazyRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/__auth/pengaturan/role.lazy').then((d) => d.Route),
   )
 
 const authPengaturanPowermeterLazyRoute = authPengaturanPowermeterLazyImport
@@ -233,6 +262,15 @@ const authPerangkatPerangkatIdRoute = authPerangkatPerangkatIdImport.update({
   path: '/$perangkatId',
   getParentRoute: () => authPerangkatRoute,
 } as any)
+
+const authUsersUserIdEditLazyRoute = authUsersUserIdEditLazyImport
+  .update({
+    path: '/$userId/edit',
+    getParentRoute: () => authUsersLazyRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/__auth/users/$userId.edit.lazy').then((d) => d.Route),
+  )
 
 const authPerangkatPerangkatIdLogsLazyRoute =
   authPerangkatPerangkatIdLogsLazyImport
@@ -324,6 +362,15 @@ const authPengaturanTarifListrikEditLazyRoute =
       ),
     )
 
+const authPengaturanRoleBaruLazyRoute = authPengaturanRoleBaruLazyImport
+  .update({
+    path: '/baru',
+    getParentRoute: () => authPengaturanRoleLazyRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/__auth/pengaturan/role/baru.lazy').then((d) => d.Route),
+  )
+
 const authPengaturanPowermeterBaruLazyRoute =
   authPengaturanPowermeterBaruLazyImport
     .update({
@@ -410,6 +457,18 @@ const authPengaturanUnitUnitIdEditLazyRoute =
     } as any)
     .lazy(() =>
       import('./routes/__auth/pengaturan/unit/$unitId.edit.lazy').then(
+        (d) => d.Route,
+      ),
+    )
+
+const authPengaturanRoleRoleIdEditLazyRoute =
+  authPengaturanRoleRoleIdEditLazyImport
+    .update({
+      path: '/$roleId/edit',
+      getParentRoute: () => authPengaturanRoleLazyRoute,
+    } as any)
+    .lazy(() =>
+      import('./routes/__auth/pengaturan/role/$roleId.edit.lazy').then(
         (d) => d.Route,
       ),
     )
@@ -618,6 +677,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authPengaturanPowermeterLazyImport
       parentRoute: typeof authPengaturanLazyImport
     }
+    '/__auth/pengaturan/role': {
+      id: '/__auth/pengaturan/role'
+      path: '/role'
+      fullPath: '/pengaturan/role'
+      preLoaderRoute: typeof authPengaturanRoleLazyImport
+      parentRoute: typeof authPengaturanLazyImport
+    }
     '/__auth/pengaturan/tarif-listrik': {
       id: '/__auth/pengaturan/tarif-listrik'
       path: '/tarif-listrik'
@@ -638,6 +704,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/perangkat/baru'
       preLoaderRoute: typeof authPerangkatBaruLazyImport
       parentRoute: typeof authPerangkatImport
+    }
+    '/__auth/users/baru': {
+      id: '/__auth/users/baru'
+      path: '/baru'
+      fullPath: '/users/baru'
+      preLoaderRoute: typeof authUsersBaruLazyImport
+      parentRoute: typeof authUsersLazyImport
     }
     '/__auth/users/register': {
       id: '/__auth/users/register'
@@ -687,6 +760,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pengaturan/powermeter/baru'
       preLoaderRoute: typeof authPengaturanPowermeterBaruLazyImport
       parentRoute: typeof authPengaturanPowermeterLazyImport
+    }
+    '/__auth/pengaturan/role/baru': {
+      id: '/__auth/pengaturan/role/baru'
+      path: '/baru'
+      fullPath: '/pengaturan/role/baru'
+      preLoaderRoute: typeof authPengaturanRoleBaruLazyImport
+      parentRoute: typeof authPengaturanRoleLazyImport
     }
     '/__auth/pengaturan/tarif-listrik/edit': {
       id: '/__auth/pengaturan/tarif-listrik/edit'
@@ -744,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authPerangkatPerangkatIdLogsLazyImport
       parentRoute: typeof authPerangkatPerangkatIdImport
     }
+    '/__auth/users/$userId/edit': {
+      id: '/__auth/users/$userId/edit'
+      path: '/$userId/edit'
+      fullPath: '/users/$userId/edit'
+      preLoaderRoute: typeof authUsersUserIdEditLazyImport
+      parentRoute: typeof authUsersLazyImport
+    }
     '/__auth/pengaturan/gedung/$gedungId/edit': {
       id: '/__auth/pengaturan/gedung/$gedungId/edit'
       path: '/edit'
@@ -792,6 +879,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pengaturan/powermeter/$powermeterId/register'
       preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyImport
       parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
+    }
+    '/__auth/pengaturan/role/$roleId/edit': {
+      id: '/__auth/pengaturan/role/$roleId/edit'
+      path: '/$roleId/edit'
+      fullPath: '/pengaturan/role/$roleId/edit'
+      preLoaderRoute: typeof authPengaturanRoleRoleIdEditLazyImport
+      parentRoute: typeof authPengaturanRoleLazyImport
     }
     '/__auth/pengaturan/unit/$unitId/edit': {
       id: '/__auth/pengaturan/unit/$unitId/edit'
@@ -1004,6 +1098,23 @@ const authPengaturanPowermeterLazyRouteWithChildren =
     authPengaturanPowermeterLazyRouteChildren,
   )
 
+interface authPengaturanRoleLazyRouteChildren {
+  authPengaturanRoleBaruLazyRoute: typeof authPengaturanRoleBaruLazyRoute
+  authPengaturanRoleRoleIdEditLazyRoute: typeof authPengaturanRoleRoleIdEditLazyRoute
+}
+
+const authPengaturanRoleLazyRouteChildren: authPengaturanRoleLazyRouteChildren =
+  {
+    authPengaturanRoleBaruLazyRoute: authPengaturanRoleBaruLazyRoute,
+    authPengaturanRoleRoleIdEditLazyRoute:
+      authPengaturanRoleRoleIdEditLazyRoute,
+  }
+
+const authPengaturanRoleLazyRouteWithChildren =
+  authPengaturanRoleLazyRoute._addFileChildren(
+    authPengaturanRoleLazyRouteChildren,
+  )
+
 interface authPengaturanTarifListrikLazyRouteChildren {
   authPengaturanTarifListrikEditLazyRoute: typeof authPengaturanTarifListrikEditLazyRoute
 }
@@ -1058,6 +1169,7 @@ interface authPengaturanLazyRouteChildren {
   authPengaturanGedungLazyRoute: typeof authPengaturanGedungLazyRouteWithChildren
   authPengaturanKampusLazyRoute: typeof authPengaturanKampusLazyRouteWithChildren
   authPengaturanPowermeterLazyRoute: typeof authPengaturanPowermeterLazyRouteWithChildren
+  authPengaturanRoleLazyRoute: typeof authPengaturanRoleLazyRouteWithChildren
   authPengaturanTarifListrikLazyRoute: typeof authPengaturanTarifListrikLazyRouteWithChildren
   authPengaturanUnitLazyRoute: typeof authPengaturanUnitLazyRouteWithChildren
 }
@@ -1067,6 +1179,7 @@ const authPengaturanLazyRouteChildren: authPengaturanLazyRouteChildren = {
   authPengaturanKampusLazyRoute: authPengaturanKampusLazyRouteWithChildren,
   authPengaturanPowermeterLazyRoute:
     authPengaturanPowermeterLazyRouteWithChildren,
+  authPengaturanRoleLazyRoute: authPengaturanRoleLazyRouteWithChildren,
   authPengaturanTarifListrikLazyRoute:
     authPengaturanTarifListrikLazyRouteWithChildren,
   authPengaturanUnitLazyRoute: authPengaturanUnitLazyRouteWithChildren,
@@ -1076,11 +1189,15 @@ const authPengaturanLazyRouteWithChildren =
   authPengaturanLazyRoute._addFileChildren(authPengaturanLazyRouteChildren)
 
 interface authUsersLazyRouteChildren {
+  authUsersBaruLazyRoute: typeof authUsersBaruLazyRoute
   authUsersRegisterLazyRoute: typeof authUsersRegisterLazyRoute
+  authUsersUserIdEditLazyRoute: typeof authUsersUserIdEditLazyRoute
 }
 
 const authUsersLazyRouteChildren: authUsersLazyRouteChildren = {
+  authUsersBaruLazyRoute: authUsersBaruLazyRoute,
   authUsersRegisterLazyRoute: authUsersRegisterLazyRoute,
+  authUsersUserIdEditLazyRoute: authUsersUserIdEditLazyRoute,
 }
 
 const authUsersLazyRouteWithChildren = authUsersLazyRoute._addFileChildren(
@@ -1115,9 +1232,11 @@ export interface FileRoutesByFullPath {
   '/pengaturan/gedung': typeof authPengaturanGedungLazyRouteWithChildren
   '/pengaturan/kampus': typeof authPengaturanKampusLazyRouteWithChildren
   '/pengaturan/powermeter': typeof authPengaturanPowermeterLazyRouteWithChildren
+  '/pengaturan/role': typeof authPengaturanRoleLazyRouteWithChildren
   '/pengaturan/tarif-listrik': typeof authPengaturanTarifListrikLazyRouteWithChildren
   '/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/perangkat/baru': typeof authPerangkatBaruLazyRoute
+  '/users/baru': typeof authUsersBaruLazyRoute
   '/users/register': typeof authUsersRegisterLazyRoute
   '/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
@@ -1125,6 +1244,7 @@ export interface FileRoutesByFullPath {
   '/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
+  '/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
   '/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
@@ -1133,6 +1253,7 @@ export interface FileRoutesByFullPath {
   '/perangkat/$perangkatId/edit': typeof authPerangkatPerangkatIdEditLazyRoute
   '/perangkat/$perangkatId/hapus': typeof authPerangkatPerangkatIdHapusLazyRoute
   '/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
+  '/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
@@ -1140,6 +1261,7 @@ export interface FileRoutesByFullPath {
   '/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
+  '/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
   '/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
@@ -1159,9 +1281,11 @@ export interface FileRoutesByTo {
   '/pengaturan/gedung': typeof authPengaturanGedungLazyRouteWithChildren
   '/pengaturan/kampus': typeof authPengaturanKampusLazyRouteWithChildren
   '/pengaturan/powermeter': typeof authPengaturanPowermeterLazyRouteWithChildren
+  '/pengaturan/role': typeof authPengaturanRoleLazyRouteWithChildren
   '/pengaturan/tarif-listrik': typeof authPengaturanTarifListrikLazyRouteWithChildren
   '/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/perangkat/baru': typeof authPerangkatBaruLazyRoute
+  '/users/baru': typeof authUsersBaruLazyRoute
   '/users/register': typeof authUsersRegisterLazyRoute
   '/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
@@ -1169,6 +1293,7 @@ export interface FileRoutesByTo {
   '/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
+  '/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
   '/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
@@ -1177,6 +1302,7 @@ export interface FileRoutesByTo {
   '/perangkat/$perangkatId/edit': typeof authPerangkatPerangkatIdEditLazyRoute
   '/perangkat/$perangkatId/hapus': typeof authPerangkatPerangkatIdHapusLazyRoute
   '/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
+  '/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
@@ -1184,6 +1310,7 @@ export interface FileRoutesByTo {
   '/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
+  '/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
   '/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
@@ -1204,9 +1331,11 @@ export interface FileRoutesById {
   '/__auth/pengaturan/gedung': typeof authPengaturanGedungLazyRouteWithChildren
   '/__auth/pengaturan/kampus': typeof authPengaturanKampusLazyRouteWithChildren
   '/__auth/pengaturan/powermeter': typeof authPengaturanPowermeterLazyRouteWithChildren
+  '/__auth/pengaturan/role': typeof authPengaturanRoleLazyRouteWithChildren
   '/__auth/pengaturan/tarif-listrik': typeof authPengaturanTarifListrikLazyRouteWithChildren
   '/__auth/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/__auth/perangkat/baru': typeof authPerangkatBaruLazyRoute
+  '/__auth/users/baru': typeof authUsersBaruLazyRoute
   '/__auth/users/register': typeof authUsersRegisterLazyRoute
   '/__auth/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/__auth/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
@@ -1214,6 +1343,7 @@ export interface FileRoutesById {
   '/__auth/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/__auth/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
+  '/__auth/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/__auth/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
   '/__auth/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/__auth/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
@@ -1222,6 +1352,7 @@ export interface FileRoutesById {
   '/__auth/perangkat/$perangkatId/edit': typeof authPerangkatPerangkatIdEditLazyRoute
   '/__auth/perangkat/$perangkatId/hapus': typeof authPerangkatPerangkatIdHapusLazyRoute
   '/__auth/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
+  '/__auth/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/__auth/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
   '/__auth/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/__auth/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
@@ -1229,6 +1360,7 @@ export interface FileRoutesById {
   '/__auth/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
+  '/__auth/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/__auth/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
   '/__auth/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
@@ -1250,9 +1382,11 @@ export interface FileRouteTypes {
     | '/pengaturan/gedung'
     | '/pengaturan/kampus'
     | '/pengaturan/powermeter'
+    | '/pengaturan/role'
     | '/pengaturan/tarif-listrik'
     | '/pengaturan/unit'
     | '/perangkat/baru'
+    | '/users/baru'
     | '/users/register'
     | '/pengaturan/gedung/$gedungId'
     | '/pengaturan/gedung/baru'
@@ -1260,6 +1394,7 @@ export interface FileRouteTypes {
     | '/pengaturan/kampus/baru'
     | '/pengaturan/powermeter/$powermeterId'
     | '/pengaturan/powermeter/baru'
+    | '/pengaturan/role/baru'
     | '/pengaturan/tarif-listrik/edit'
     | '/pengaturan/unit/$unitId'
     | '/pengaturan/unit/baru'
@@ -1268,6 +1403,7 @@ export interface FileRouteTypes {
     | '/perangkat/$perangkatId/edit'
     | '/perangkat/$perangkatId/hapus'
     | '/perangkat/$perangkatId/logs'
+    | '/users/$userId/edit'
     | '/pengaturan/gedung/$gedungId/edit'
     | '/pengaturan/gedung/$gedungId/hapus'
     | '/pengaturan/kampus/$kampusId/edit'
@@ -1275,6 +1411,7 @@ export interface FileRouteTypes {
     | '/pengaturan/powermeter/$powermeterId/edit'
     | '/pengaturan/powermeter/$powermeterId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register'
+    | '/pengaturan/role/$roleId/edit'
     | '/pengaturan/unit/$unitId/edit'
     | '/pengaturan/unit/$unitId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register/baru'
@@ -1293,9 +1430,11 @@ export interface FileRouteTypes {
     | '/pengaturan/gedung'
     | '/pengaturan/kampus'
     | '/pengaturan/powermeter'
+    | '/pengaturan/role'
     | '/pengaturan/tarif-listrik'
     | '/pengaturan/unit'
     | '/perangkat/baru'
+    | '/users/baru'
     | '/users/register'
     | '/pengaturan/gedung/$gedungId'
     | '/pengaturan/gedung/baru'
@@ -1303,6 +1442,7 @@ export interface FileRouteTypes {
     | '/pengaturan/kampus/baru'
     | '/pengaturan/powermeter/$powermeterId'
     | '/pengaturan/powermeter/baru'
+    | '/pengaturan/role/baru'
     | '/pengaturan/tarif-listrik/edit'
     | '/pengaturan/unit/$unitId'
     | '/pengaturan/unit/baru'
@@ -1311,6 +1451,7 @@ export interface FileRouteTypes {
     | '/perangkat/$perangkatId/edit'
     | '/perangkat/$perangkatId/hapus'
     | '/perangkat/$perangkatId/logs'
+    | '/users/$userId/edit'
     | '/pengaturan/gedung/$gedungId/edit'
     | '/pengaturan/gedung/$gedungId/hapus'
     | '/pengaturan/kampus/$kampusId/edit'
@@ -1318,6 +1459,7 @@ export interface FileRouteTypes {
     | '/pengaturan/powermeter/$powermeterId/edit'
     | '/pengaturan/powermeter/$powermeterId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register'
+    | '/pengaturan/role/$roleId/edit'
     | '/pengaturan/unit/$unitId/edit'
     | '/pengaturan/unit/$unitId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register/baru'
@@ -1336,9 +1478,11 @@ export interface FileRouteTypes {
     | '/__auth/pengaturan/gedung'
     | '/__auth/pengaturan/kampus'
     | '/__auth/pengaturan/powermeter'
+    | '/__auth/pengaturan/role'
     | '/__auth/pengaturan/tarif-listrik'
     | '/__auth/pengaturan/unit'
     | '/__auth/perangkat/baru'
+    | '/__auth/users/baru'
     | '/__auth/users/register'
     | '/__auth/pengaturan/gedung/$gedungId'
     | '/__auth/pengaturan/gedung/baru'
@@ -1346,6 +1490,7 @@ export interface FileRouteTypes {
     | '/__auth/pengaturan/kampus/baru'
     | '/__auth/pengaturan/powermeter/$powermeterId'
     | '/__auth/pengaturan/powermeter/baru'
+    | '/__auth/pengaturan/role/baru'
     | '/__auth/pengaturan/tarif-listrik/edit'
     | '/__auth/pengaturan/unit/$unitId'
     | '/__auth/pengaturan/unit/baru'
@@ -1354,6 +1499,7 @@ export interface FileRouteTypes {
     | '/__auth/perangkat/$perangkatId/edit'
     | '/__auth/perangkat/$perangkatId/hapus'
     | '/__auth/perangkat/$perangkatId/logs'
+    | '/__auth/users/$userId/edit'
     | '/__auth/pengaturan/gedung/$gedungId/edit'
     | '/__auth/pengaturan/gedung/$gedungId/hapus'
     | '/__auth/pengaturan/kampus/$kampusId/edit'
@@ -1361,6 +1507,7 @@ export interface FileRouteTypes {
     | '/__auth/pengaturan/powermeter/$powermeterId/edit'
     | '/__auth/pengaturan/powermeter/$powermeterId/hapus'
     | '/__auth/pengaturan/powermeter/$powermeterId/register'
+    | '/__auth/pengaturan/role/$roleId/edit'
     | '/__auth/pengaturan/unit/$unitId/edit'
     | '/__auth/pengaturan/unit/$unitId/hapus'
     | '/__auth/pengaturan/powermeter/$powermeterId/register/baru'
@@ -1432,6 +1579,7 @@ export const routeTree = rootRoute
         "/__auth/pengaturan/gedung",
         "/__auth/pengaturan/kampus",
         "/__auth/pengaturan/powermeter",
+        "/__auth/pengaturan/role",
         "/__auth/pengaturan/tarif-listrik",
         "/__auth/pengaturan/unit"
       ]
@@ -1440,7 +1588,9 @@ export const routeTree = rootRoute
       "filePath": "__auth/users.lazy.tsx",
       "parent": "/__auth",
       "children": [
-        "/__auth/users/register"
+        "/__auth/users/baru",
+        "/__auth/users/register",
+        "/__auth/users/$userId/edit"
       ]
     },
     "/__auth/perangkat/$perangkatId": {
@@ -1478,6 +1628,14 @@ export const routeTree = rootRoute
         "/__auth/pengaturan/powermeter/baru"
       ]
     },
+    "/__auth/pengaturan/role": {
+      "filePath": "__auth/pengaturan/role.lazy.tsx",
+      "parent": "/__auth/pengaturan",
+      "children": [
+        "/__auth/pengaturan/role/baru",
+        "/__auth/pengaturan/role/$roleId/edit"
+      ]
+    },
     "/__auth/pengaturan/tarif-listrik": {
       "filePath": "__auth/pengaturan/tarif-listrik.lazy.tsx",
       "parent": "/__auth/pengaturan",
@@ -1496,6 +1654,10 @@ export const routeTree = rootRoute
     "/__auth/perangkat/baru": {
       "filePath": "__auth/perangkat/baru.lazy.tsx",
       "parent": "/__auth/perangkat"
+    },
+    "/__auth/users/baru": {
+      "filePath": "__auth/users/baru.lazy.tsx",
+      "parent": "/__auth/users"
     },
     "/__auth/users/register": {
       "filePath": "__auth/users/register.lazy.tsx",
@@ -1538,6 +1700,10 @@ export const routeTree = rootRoute
       "filePath": "__auth/pengaturan/powermeter/baru.lazy.tsx",
       "parent": "/__auth/pengaturan/powermeter"
     },
+    "/__auth/pengaturan/role/baru": {
+      "filePath": "__auth/pengaturan/role/baru.lazy.tsx",
+      "parent": "/__auth/pengaturan/role"
+    },
     "/__auth/pengaturan/tarif-listrik/edit": {
       "filePath": "__auth/pengaturan/tarif-listrik/edit.lazy.tsx",
       "parent": "/__auth/pengaturan/tarif-listrik"
@@ -1574,6 +1740,10 @@ export const routeTree = rootRoute
       "filePath": "__auth/perangkat/$perangkatId/logs.lazy.tsx",
       "parent": "/__auth/perangkat/$perangkatId"
     },
+    "/__auth/users/$userId/edit": {
+      "filePath": "__auth/users/$userId.edit.lazy.tsx",
+      "parent": "/__auth/users"
+    },
     "/__auth/pengaturan/gedung/$gedungId/edit": {
       "filePath": "__auth/pengaturan/gedung/$gedungId.edit.lazy.tsx",
       "parent": "/__auth/pengaturan/gedung/$gedungId"
@@ -1606,6 +1776,10 @@ export const routeTree = rootRoute
         "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit",
         "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus"
       ]
+    },
+    "/__auth/pengaturan/role/$roleId/edit": {
+      "filePath": "__auth/pengaturan/role/$roleId.edit.lazy.tsx",
+      "parent": "/__auth/pengaturan/role"
     },
     "/__auth/pengaturan/unit/$unitId/edit": {
       "filePath": "__auth/pengaturan/unit/$unitId.edit.lazy.tsx",

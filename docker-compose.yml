@@ -1,0 +1,79 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: mpm_dummy_db
+    environment:
+      POSTGRES_USER: mpm_user
+      POSTGRES_PASSWORD: mpm_password
+      POSTGRES_DB: mpm_dummy
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dummy_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mpm_user -d mpm_dummy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Applies migrations/tables and seeds the default dummy devices.
+  # Runs once before api and reader start.
+  migrations:
+    build: .
+    container_name: mpm_migrations
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DUMMY_MODE=true
+    command: >
+      sh -c "python create_tables.py && python dummy_seed.py"
+
+  api:
+    build: .
+    container_name: mpm_fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DUMMY_MODE=true
+      - MODBUS_READ_INTERVAL=60
+      - MODBUS_MAX_WORKERS=60
+
+  # Polls powermeters in dummy mode, generating synthetic metrics.
+  reader:
+    build: .
+    container_name: mpm_reader
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DUMMY_MODE=true
+      - MODBUS_READ_INTERVAL=60
+      - MODBUS_MAX_WORKERS=60
+      - DB_HOST=db
+      - DB_PORT=5432
+    command: ["sh", "./entrypoint.reader.sh"]
+
+  web:
+    build: ./web
+    container_name: mpm_web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    volumes:
+      - ./web:/app
+      - /app/node_modules # Prevent host node_modules from overwriting container's
+
+volumes:
+  postgres_dummy_data:
