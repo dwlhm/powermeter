@@ -1,32 +1,42 @@
-from pymodbus.client import ModbusTcpClient
-from time import sleep
+"""Read a single powermeter using the shared reader strategy.
+
+This is a thin convenience script around modbus_reader.  It uses the hardcoded
+register map from device_registers.registers_repo for quick ad-hoc tests.
+
+Usage:
+    python readModbusOne.py
+    DUMMY_MODE=true python readModbusOne.py
+"""
+from configuration.config import app_settings
 from device_registers.registers_repo import repo as registers
+from modbus_reader import create_reader
 
-ip_addr = "10.225.0.204"
-port = 502
-pm_seri = "AW9L"
+IP_ADDR = "10.225.0.204"
+PORT = 502
+PM_SERI = "AW9L"
+DEVICE_ID = "Mg=="
 
-def read(client, register, data, ip_addr, index):
-	rr = client.read_holding_registers(register[0], 2, slave=1)
-	if rr.isError():
-		print(f"{register[0]} - exception in pymodbus {rr}")
-	else:
-		data.append(rr.registers[0]*register[1])
-		print(f"reading register {register[0]} from {ip_addr}, value: {rr.registers[0]*register[1]} {register[3]}")
-		
 
-client = ModbusTcpClient(
-		host= ip_addr, 
-		retries = 5, 
-		no_resend_on_retry = False
-	)  
-conn = client.connect()
+def main():
+    settings = app_settings()
+    reader = create_reader(dummy_mode=settings["dummy_mode"])
 
-if conn:
-	print(f"connected to {ip_addr}:{port} with device_id: {id} [{pm_seri}]")
-	data = []
-	for index, register in enumerate(registers[pm_seri]):
-		read(client, register, data, ip_addr, index)	  
-		sleep(2)              
-	client.close()  
-		
+    pm_config = {
+        "seri": PM_SERI,
+        "slave_id": 1,
+        "timeout": 4,
+        "count": 2,
+        "register": registers.get(PM_SERI, []),
+    }
+
+    try:
+        print(f"[{'DUMMY' if settings['dummy_mode'] else 'MODBUS'}] Reading {PM_SERI} @ {IP_ADDR}:{PORT}")
+        data = reader.read(IP_ADDR, PORT, DEVICE_ID, pm_config)
+        for key, value in data.items():
+            print(f"  {key}: {value}")
+    finally:
+        reader.close()
+
+
+if __name__ == "__main__":
+    main()

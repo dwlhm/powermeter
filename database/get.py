@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 import base64
 from configuration.config import load_config
 
@@ -7,7 +7,7 @@ def get_all_devices_ip():
     sql = """SELECT ip_addr, seri, id, device_name FROM device"""
     result = []
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
                 res = cur.fetchall()
@@ -15,7 +15,7 @@ def get_all_devices_ip():
                     "data": res
                 }
                 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         result = { "error": Error }
     finally:
         return result
@@ -27,12 +27,12 @@ def get_device(device_id):
              WHERE id = %s"""
     result = None
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (device_id, ))
 
                 result = cur.fetchone()
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         result = Error
     finally:
         return result
@@ -45,13 +45,13 @@ def get_data_latest(device_id):
     
     result = None
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (device_id, ))
 
                 result = cur.fetchone()
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         result = Error
     
     finally:
@@ -65,12 +65,12 @@ def get_role_by_id(id: str):
              WHERE id = %s"""
     result = None
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id, ))
 
                 result = cur.fetchone()
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         result = Error
     finally:

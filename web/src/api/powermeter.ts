@@ -8,6 +8,9 @@ export interface Powermeter {
   id?: string;
   seri?: string;
   brand?: string;
+  slave_id?: number;
+  count?: number;
+  timeout?: number;
   register?: RegisterItem[];
 }
 
@@ -36,6 +39,9 @@ export async function newPowermeter(props: Token<Powermeter>) {
     data: JSON.stringify({
       seri: props.data.seri,
       brand: props.data.brand,
+      slave_id: props.data.slave_id ?? 1,
+      count: props.data.count ?? 2,
+      timeout: props.data.timeout ?? 4,
     }),
   };
 
@@ -59,6 +65,9 @@ export async function updatePowermeter(
     data: JSON.stringify({
       seri: props.data.seri,
       brand: props.data.brand,
+      slave_id: props.data.slave_id ?? 1,
+      count: props.data.count ?? 2,
+      timeout: props.data.timeout ?? 4,
     }),
   };
 

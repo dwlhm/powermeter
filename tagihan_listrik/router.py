@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from dependencies import oauth2_scheme
-from user.internal import get_current_user
 from configuration.config import load_config
+from permission import require_permission
 from .db import get_tarif, update_tarif
 
 router = APIRouter(
     prefix="/tarif-listrik",
     tags=["Tarif Listrik"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(oauth2_scheme)]
 )
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(require_permission("tarif.view"))])
 async def get_tarif_listrik():
     result = get_tarif(config=load_config())
     if result.get("error"): raise HTTPException(
@@ -33,7 +33,7 @@ async def get_tarif_listrik():
 class TarifListrik(BaseModel):
     harga: int
 
-@router.put("/")
+@router.put("/", dependencies=[Depends(require_permission("tarif.edit"))])
 async def update_tarif_listrik(tarifListrik: TarifListrik):
     result = update_tarif(harga=tarifListrik.harga, config=load_config())
     if result.get("error"): return HTTPException(

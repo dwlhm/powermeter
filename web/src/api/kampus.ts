@@ -56,11 +56,15 @@ export async function updateKampus(props: Token<Kampus>): Promise<Api<Kampus>> {
   return data
 }
 
-export async function removeKampus(props: {token: string | null, id: string}) {
+export async function removeKampus(props: {token: string | null, id: string, mode?: string, move_to_id?: string}) {
   const config = {
     method: 'delete',
     headers: {
       'Authorization': `Bearer ${props.token}`
+    },
+    params: {
+      mode: props.mode,
+      move_to_id: props.move_to_id
     }
   }
 

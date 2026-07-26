@@ -1,18 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Annotated, Optional
 from pydantic import BaseModel
+from datetime import datetime
 import base64
 
-from user.internal import get_current_user
 from dependencies import oauth2_scheme
 from configuration.config import load_config
+from permission import require_permission
 from .db import get_all, new, get_by_id, update, remove, get_latest_data, get_device_logs
 
 
 router = APIRouter(
     prefix="/device",
     tags=["Perangkat"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(oauth2_scheme)]
 )
 
 class Perangkat(BaseModel):
@@ -22,7 +23,7 @@ class Perangkat(BaseModel):
     port: int
     powermeter: str
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(require_permission("device.view"))])
 async def get_all_perangkat():
     result = get_all(load_config())
     if (result.get("error")): raise HTTPException(
@@ -34,7 +35,7 @@ async def get_all_perangkat():
         "results": result.get("data")
     }
 
-@router.get("/{id}")
+@router.get("/{id}", dependencies=[Depends(require_permission("device.view"))])
 async def get_perangkat(id: str):
     result = get_by_id(id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -46,7 +47,7 @@ async def get_perangkat(id: str):
         "results": result.get("data")
     }
 
-@router.get("/{id}/latest")
+@router.get("/{id}/latest", dependencies=[Depends(require_permission("device.view"))])
 async def get_latest_data_perangkat(id: str):
     result = get_latest_data(id, load_config())
     
@@ -59,7 +60,7 @@ async def get_latest_data_perangkat(id: str):
         "results": result.get("data")
     }
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_permission("device.create"))])
 async def insert_perangkat(perangkat: Perangkat):
     result = new(
         name=perangkat.name, 
@@ -85,7 +86,7 @@ async def insert_perangkat(perangkat: Perangkat):
         }
     }
 
-@router.put("/{id}")
+@router.put("/{id}", dependencies=[Depends(require_permission("device.edit"))])
 async def update_perangkat(id: str, perangkat: Perangkat):
     result = update(
         name=perangkat.name, 
@@ -112,7 +113,7 @@ async def update_perangkat(id: str, perangkat: Perangkat):
         }
     }
 
-@router.delete("/{id}")
+@router.delete("/{id}", dependencies=[Depends(require_permission("device.delete"))])
 async def delete_perangkat(id: str):
     result = remove(id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -126,11 +127,21 @@ async def delete_perangkat(id: str):
         }
     }
 
-@router.get("/{id}/logs")
-async def get_perangkat_logs(id: str):
+@router.get("/{id}/logs", dependencies=[Depends(require_permission("device.view"))])
+async def get_perangkat_logs(
+    id: str,
+    type: Optional[str] = Query(None, description="Filter berdasarkan tipe log (error, warning, info)"),
+    from_date: Optional[datetime] = Query(None, description="Filter log dari tanggal (ISO 8601)"),
+    to_date: Optional[datetime] = Query(None, description="Filter log sampai tanggal (ISO 8601)"),
+    limit: Optional[int] = Query(None, ge=1, le=1000, description="Batas jumlah log yang dikembalikan"),
+):
     result = get_device_logs(
-        device_id=id, 
-        config=load_config()
+        device_id=id,
+        config=load_config(),
+        log_type=type,
+        from_date=from_date,
+        to_date=to_date,
+        limit=limit,
     )
     if (result.get("error")): raise HTTPException(
             status_code=400,

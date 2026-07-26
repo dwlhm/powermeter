@@ -1,14 +1,15 @@
 import { createLazyFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import { AxiosError, AxiosResponse } from 'axios'
+import { AxiosError } from 'axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useAuth } from '../../../../auth'
 import Errors from '../../../../components/Errors'
 import { Api } from '../../../../api/internal'
-import { newUnit, Unit } from '../../../../api/unit'
+import { newUnit } from '../../../../api/unit'
 import { getKampus, Kampus } from '../../../..//api/kampus'
 import { Select } from '@headlessui/react'
+import { CompModal } from '@/common'
+import toast from 'react-hot-toast'
 
 export const Route = createLazyFileRoute('/__auth/pengaturan/unit/baru')({
   component: UnitBaru
@@ -52,78 +53,79 @@ function UnitBaru() {
         }
       },
       {
-        onSuccess: (res: AxiosResponse<Api<Unit>, any>) => {
-          const unitId = res.data.results.id as string
+        onSuccess: () => {
           setIsSubmitting(false)
           router.invalidate()
-          navigate({ to: "/pengaturan/unit/$unitId", params: { unitId } })
+          toast.success('Berhasil menambahkan data unit')
+          navigate({ to: "/pengaturan/unit" })
+        },
+        onError: (error: any) => {
+          setIsSubmitting(false)
+          const errorMessage = error.response?.data?.detail || error.response?.data?.message || error.message || 'Gagal menambahkan data unit'
+          toast.error(errorMessage)
         }
       })
 
     } catch (error) {
       setIsSubmitting(false)
+      toast.error('Terjadi kesalahan yang tidak terduga')
     }
   }
 
   return(
-    <div className='fixed inset-0 flex justify-center items-center'>
-      <div 
-        className='bg-white rounded shadow-md w-full max-w-2xl p-3'>
-        <Link 
-          to='/pengaturan/unit'
-          className='inline-block float-right'>
-            <div className='bg-red-900 p-1 rounded w-full transition border border-2 border-red-900 transition hover:border-red-600'>
-              <XMarkIcon className="block h-6 w-6 text-white" />
-            </div>
-        </Link>
-        <form className="mt-5 mb-10 max-w-lg mx-auto" onSubmit={onFormSubmit}>
-          <h2 className='mb-10 text-2xl font-semibold text-center'>Tambah Data Unit</h2>
-            <fieldset className="w-full grid gap-2">
-              <div className="grid gap-2 items-center min-w-[300px]">
-                <label htmlFor="name-input" className="text-sm font-medium">
-                  Nama
-                </label>
-                <input
-                  id="name-input"
-                  name="name"
-                  placeholder="Masukan Nama Unit yang Ditambahkan"
-                  type="text"
-                  className="border border-gray-300 rounded-md p-2 w-full"
-                  required
-                />
-              </div>
-              <div className="grid gap-2 items-center min-w-[300px]">
-                <label htmlFor="kampus-input" className="text-sm font-medium">
-                  Kampus
-                </label>
+    <CompModal
+      title="Tambah Data Unit"
+      closeTo="/pengaturan/unit"
+    >
+      <form className="mb-4 max-w-lg mx-auto" onSubmit={onFormSubmit}>
+        <fieldset className="w-full grid gap-4">
+          <div className="grid gap-2 items-center min-w-[300px]">
+            <label htmlFor="name-input" className="text-sm font-medium">
+              Nama Unit
+            </label>
+            <input
+              id="name-input"
+              name="name"
+              placeholder="Masukan Nama Unit yang Ditambahkan"
+              type="text"
+              className="bg-transparent dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-slate-100 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+              required
+            />
+          </div>
+          <div className="grid gap-2 items-center min-w-[300px]">
+            <label htmlFor="kampus-input" className="text-sm font-medium">
+              Kampus
+            </label>
+            {
+              kSuccess && <Select id='kampus-input' name="kampus" aria-label="Kampus" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow w-full">
                 {
-                  kSuccess && <Select id='kampus-input' name="kampus" aria-label="Kampus" className="p-2 bg-gray-200/60 rounded">
-                    {
-                      kData?.results.map((v: Kampus, i: number) => (
-                        <option value={v.id} key={`data-unit_${i}`}>{v.name}</option>
-                      ))
-                    }
-                    </Select>
+                  kData?.results.map((v: Kampus, i: number) => (
+                    <option value={v.id} key={`data-unit_${i}`}>{v.name}</option>
+                  ))
                 }
-              </div>
-              <div className='flex gap-4 mt-5'>
-                <button
-                  type="submit"
-                  className="mt-2 bg-blue-900 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500 border border-2 border-blue-900 transition hover:border-blue-500"
-                >
-                  {isSubmitting ? "Loading..." : "Simpan"}
-                </button>
-                <Link
-                  to="/pengaturan/unit"
-                  className="mt-2 bg-red-900 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500 text-center border border-2 border-red-900 transition hover:border-red-600"
-                >
-                  Batalkan
-                </Link>
-              </div>
-            </fieldset>
-            <div>{mutation.isError ? <Errors className="mt-3" process="update data perangkat" message={mutation.error as AxiosError} /> : <></> }</div>
-          </form>
-      </div>
-    </div>
+                </Select>
+            }
+          </div>
+          <div className='flex gap-4 mt-5'>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-900 dark:bg-blue-600 text-white py-2 px-4 rounded-md w-full disabled:bg-slate-300 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-500 border border-blue-900 dark:border-blue-600 transition-colors hover:bg-blue-800 dark:hover:bg-blue-700"
+            >
+              {isSubmitting ? "Menyimpan..." : "Simpan"}
+            </button>
+            <Link
+              to="/pengaturan/unit"
+              className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2 px-4 rounded-md w-full text-center border border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
+            >
+              Batalkan
+            </Link>
+          </div>
+        </fieldset>
+        {mutation.isError && (
+          <Errors className="mt-4" process="tambah data unit" message={mutation.error as AxiosError} />
+        )}
+      </form>
+    </CompModal>
   )
 }

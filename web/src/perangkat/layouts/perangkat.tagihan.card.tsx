@@ -10,8 +10,9 @@ export const TagihanCard = (props: {
   tarif: number | undefined;
 }) => {
   if (props.data.isSuccess) {
+    const results = props.data.data?.results;
     const tagihan =
-      props.data.data?.results[props.data.data?.results.length - 1];
+      results && results.length > 0 ? results[results.length - 1] : undefined;
     
     if (!tagihan || typeof tagihan.energy !== 'number') {
       return (
@@ -27,18 +28,18 @@ export const TagihanCard = (props: {
     return (
       <LayoutPerangkatCard>
         <PerangkatSubTitle>Konsumsi Energi Bulan Ini</PerangkatSubTitle>
-        <div className="flex gap-2 py-5">
+        <div className="flex gap-2 py-5 flex-wrap">
           <p>Rp</p>
-          <p className="text-4xl font-bold">
+          <p className="text-4xl font-bold break-words">
             {new Intl.NumberFormat("id-ID").format(
               tagihan.energy * (props.tarif || 1),
             )}
-              <span className="block mt-3 px-3 w-fit text-lg font-medium bg-gray-300 text-gray-900 rounded">
+              <span className="block mt-3 px-3 w-fit text-lg font-medium bg-secondary text-secondary-foreground rounded">
                 <span className="text-xs">atau</span> {tagihan.energy} kWh
               </span>
           </p>
         </div>
-        <p className="text-xs italic text-gray-200/50">
+        <p className="text-xs italic text-muted-foreground">
           Terakhir diperbaharui pada:{" "}
           {new Date(tagihan.timestamp).toLocaleString()}
         </p>

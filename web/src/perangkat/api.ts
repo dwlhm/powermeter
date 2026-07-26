@@ -19,7 +19,7 @@ export async function getDetailPerangkat(
 ): Promise<Api<DetailPerangkat>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}/`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -40,7 +40,7 @@ export async function getPerangkatData(
 ): Promise<Api<PerangkatData>> {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/data/${context.queryKey[2]}/`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/data/${context.queryKey[2]}`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -56,10 +56,10 @@ export async function getPerangkatData(
 
 export async function getPerangkatDataArsip(
   context: QueryFunctionContext
-): Promise<Api<any>> {
+): Promise<Api<PerangkatData>> {
   const config: AxiosRequestConfig = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/data/${context.queryKey[2]}/arsip/`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/data/${context.queryKey[2]}/arsip`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },

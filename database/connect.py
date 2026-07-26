@@ -1,13 +1,13 @@
-import psycopg2
+import psycopg
 from configuration.config import load_config
 
 def connect(config):
     """ Connect to the PostgreSQL database server """
     try:
         # connecting to the PostgreSQL server
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             return conn
-    except (psycopg2.DatabaseError, Exception) as error:
+    except (psycopg.DatabaseError, Exception) as error:
         print(error)
 
 

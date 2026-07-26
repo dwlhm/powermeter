@@ -3,23 +3,23 @@ from typing import Annotated
 from pydantic import BaseModel
 import base64
 
-from user.internal import get_current_user
 from dependencies import oauth2_scheme
 from configuration.config import load_config
+from permission import require_permission
 from .db import get_all, new, get_by_id, update, remove
 
 
 router = APIRouter(
     prefix="/unit",
     tags=["Unit"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(oauth2_scheme)]
 )
 
 class Unit(BaseModel):
     name: str
     kampus: str
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(require_permission("unit.view"))])
 async def get_all_unit():
     result = get_all(load_config())
     if (result.get("error")): raise HTTPException(
@@ -31,7 +31,7 @@ async def get_all_unit():
         "results": result.get("data")
     }
 
-@router.get("/{id}")
+@router.get("/{id}", dependencies=[Depends(require_permission("unit.view"))])
 async def get_unit(id: str):
     result = get_by_id(id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -43,7 +43,7 @@ async def get_unit(id: str):
         "results": result.get("data")
     }
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_permission("unit.create"))])
 async def insert_unit(unit: Unit):
     result = new(unit.name, unit.kampus, load_config())
     if (result.get("error")): raise HTTPException(
@@ -61,7 +61,7 @@ async def insert_unit(unit: Unit):
         }
     }
 
-@router.put("/{id}")
+@router.put("/{id}", dependencies=[Depends(require_permission("unit.edit"))])
 async def update_unit(id: str, unit: Unit):
     result = update(unit.name, unit.kampus, id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -77,9 +77,9 @@ async def update_unit(id: str, unit: Unit):
         }
     }
 
-@router.delete("/{id}")
-async def delete_unit(id: str):
-    result = remove(id, load_config())
+@router.delete("/{id}", dependencies=[Depends(require_permission("unit.delete"))])
+async def delete_unit(id: str, mode: str = None, move_to_id: str = None):
+    result = remove(id, mode, move_to_id, load_config())
     if (result.get("error")): raise HTTPException(
             status_code=400,
             detail=result.get("error")

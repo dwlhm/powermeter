@@ -1,8 +1,5 @@
-import { ChartPieIcon } from "@heroicons/react/24/outline";
 import {
   PerangkatSubBody,
-  PerangkatSubHeadingPanel,
-  PerangkatSubTitle,
 } from "../components";
 import { TarifListrikCard } from "@/tarif_listrik/layouts/tarif.listrik.card";
 import { useQueryEnergyConsumption } from "../hooks";
@@ -10,29 +7,27 @@ import { CompLoading, LayoutError } from "@/common";
 import { useQueryTarifListrik } from "@/tarif_listrik/hooks";
 import { TagihanCard } from "./perangkat.tagihan.card";
 import { PerangkatEnergyChartCard } from "./perangkat.energy.chart.card";
+import { useAuth } from "@/auth";
 
 export default function PerangkatEnergyOverview(props: {
   token: string | null;
   perangkatId: string;
 }) {
+  const { permissions } = useAuth();
+  const canViewTarif = permissions.includes("tarif.view");
+
   const energy = useQueryEnergyConsumption({
     ...props,
     year: new Date().getFullYear(),
   });
-  const tarif = useQueryTarifListrik(props.token);
+  const tarif = useQueryTarifListrik(props.token, canViewTarif);
 
   return (
     <>
-      <PerangkatSubHeadingPanel withoutBackBtn={true}>
-        <PerangkatSubTitle className="flex items-center gap-2">
-          <ChartPieIcon className="w-5 h-5" />
-          Dashboard
-        </PerangkatSubTitle>
-      </PerangkatSubHeadingPanel>
       <PerangkatSubBody>
         <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
           <TagihanCard data={energy} tarif={tarif.data?.results.harga} />
-          <TarifListrikCard tarif={tarif} />
+          {canViewTarif && <TarifListrikCard tarif={tarif} />}
         </div>
         <div>
           {energy.isLoading ? (

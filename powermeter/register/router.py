@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
 from pydantic import BaseModel
 from dependencies import oauth2_scheme
+from permission import require_permission
 from .db import get, new, update, remove, get_by_id
 from configuration.config import load_config
 
@@ -14,7 +15,7 @@ router = APIRouter(
 class PowermeterRegister(BaseModel):
     registers: str 
 
-@router.post("/{id}/register")
+@router.post("/{id}/register", dependencies=[Depends(require_permission("powermeter.create"))])
 async def new_register(id: str, pmRegister: PowermeterRegister):
     print("ereew",id)
     result = new(id, pmRegister.registers, load_config())
@@ -30,7 +31,7 @@ async def new_register(id: str, pmRegister: PowermeterRegister):
         "results": result.get('data')
     }
 
-@router.get("/{id}/register")
+@router.get("/{id}/register", dependencies=[Depends(require_permission("powermeter.view"))])
 async def get_register_by_id(id: str):
     result = get_by_id(id, load_config())
 
@@ -46,7 +47,7 @@ async def get_register_by_id(id: str):
     }
 
 
-@router.put("/{id}/register")
+@router.put("/{id}/register", dependencies=[Depends(require_permission("powermeter.edit"))])
 async def update_register(id: str, pmReg: PowermeterRegister):
     result = update(id=id, powermeter_id=pmReg.powermeter_id, register=pmReg.registers, config=load_config())
 
@@ -61,7 +62,7 @@ async def update_register(id: str, pmReg: PowermeterRegister):
         "results": result.get("data")
     }
 
-@router.delete("/{id}/register")
+@router.delete("/{id}/register", dependencies=[Depends(require_permission("powermeter.delete"))])
 async def delete_register(id: str):
     result = remove(id, load_config())
 

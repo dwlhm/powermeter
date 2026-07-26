@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 from configuration.config import load_config
 
 def update_device_detail(device_id, device_name, device_ip):
@@ -13,12 +13,12 @@ def update_device_detail(device_id, device_name, device_ip):
     config = load_config()
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 res = cur.execute(sql, (device_name, device_ip, device_id))
                 result = { "data": True }
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         result = { "error": Error }
     finally:
         return result

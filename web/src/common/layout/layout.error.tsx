@@ -21,23 +21,25 @@ export const LayoutError = (props: {
   const err_msg: string | string[] =
     typeof props.message == "string"
       ? props.message
-      : (props.message.response?.data as { detail: string }).detail;
+      : props.message.response?.data
+        ? (props.message.response.data as { detail: string }).detail
+        : props.message.message;
   return (
     <div
-      className={`flex justify-center items-center gap-3 px-5 py-3 rounded border border-red-500 bg-red-200 w-auto m-auto ${props.className}`}
+      className={`flex justify-center items-center gap-3 px-5 py-3 rounded border border-red-500 bg-red-200 dark:bg-red-950/30 dark:border-red-800 w-auto m-auto ${props.className}`}
     >
-      <ExclamationCircleIcon className="w-8 h-8 text-red-900" />
-      <h4 className="text-base font-medium text-red-900 capitalize">
+      <ExclamationCircleIcon className="w-8 h-8 text-red-900 dark:text-red-400" />
+      <h4 className="text-base font-medium text-red-900 dark:text-red-400 capitalize">
         Error {props.process}:
       </h4>
-      <p className="italic text-red-800 text-base">
+      <p className="italic text-red-800 dark:text-red-300 text-base">
         {typeof err_msg == "string" ? err_msg : "system error"}
       </p>
       {typeof props.message != "string" &&
       (props.message as AxiosError).response?.status == 401 ? (
         <Link
           to={"/login"}
-          className="bg-blue-900 py-1 px-3 rounded text-white transition hover:bg-blue-900/80"
+          className="bg-blue-900 dark:bg-blue-600 py-1 px-3 rounded text-white transition hover:bg-blue-900/80 dark:hover:bg-blue-500"
         >
           Login
         </Link>

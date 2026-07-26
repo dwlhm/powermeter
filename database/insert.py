@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 from configuration.config import load_config
 from datetime import datetime
 import main
@@ -14,7 +14,7 @@ def insert_device(device_name, ip_addr, seri):
     config = load_config()
 
     try:
-        with  psycopg2.connect(**config) as conn:
+        with  psycopg.connect(**config) as conn:
             with  conn.cursor() as cur:
                 # execute the INSERT statement
                 cur.execute(sql, (device_name, ip_addr, seri))
@@ -26,7 +26,7 @@ def insert_device(device_name, ip_addr, seri):
 
                 # commit the changes to the database
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
+    except (Exception, psycopg.DatabaseError) as error:
         print(error)    
     finally:
         return device_id
@@ -48,7 +48,7 @@ def insert_data(device_id, data):
     config = load_config()
 
     try:
-        with  psycopg2.connect(**config) as conn:
+        with  psycopg.connect(**config) as conn:
             with  conn.cursor() as cur:
                 now = datetime.now()
                 # execute the INSERT statement
@@ -63,7 +63,7 @@ def insert_data(device_id, data):
 
                 # commit the changes to the database
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
+    except (Exception, psycopg.DatabaseError) as error:
         print(error)    
     finally:
         return result
@@ -78,12 +78,12 @@ def insert_new_role(role_name: str):
     config = load_config()
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 result = cur.execute(sql, (role_name, ))
 
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         result = Error
     finally:
         return result

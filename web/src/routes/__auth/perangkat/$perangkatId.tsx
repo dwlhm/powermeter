@@ -14,6 +14,7 @@ import {
   ArchiveBoxIcon,
   ChartPieIcon,
   CircleStackIcon,
+  CodeBracketSquareIcon,
 } from '@heroicons/react/24/outline'
 
 export const Route = createFileRoute('/__auth/perangkat/$perangkatId')({
@@ -44,21 +45,20 @@ function PreviewPerangkat() {
 
   if (isSuccess)
     return (
-      <>
-        <div className="flex justify-between gap-4 items-center sticky top-16 p-2 sm:p-6 lg:p-8 sm:pb-2 lg:pb-2 bg-white rounded-t z-10">
+      <div className="h-full flex flex-col">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 p-4 sm:px-6 lg:px-8 bg-card/80 backdrop-blur-xl border-b border-border rounded-tl-2xl">
           <div>
             <div className="flex gap-4 items-center">
-              <h2 className="font-semibold text-xl">{dDetail.results.name}</h2>
+              <h2 className="font-bold text-2xl tracking-tight text-foreground">{dDetail.results.name}</h2>
               <p
-                className={`capitalize device-status ${dDetail.results.status}`}
+                className={`capitalize device-status ${dDetail.results.status} bg-background/50 px-3 py-1 rounded-full text-xs border border-border`}
               >
                 {dDetail.results.status}
               </p>
             </div>
 
-            <p className="text-sm">
-              {dDetail.results.ip_addr} - {dDetail.results.powermeter.seri}(
-              {dDetail.results.powermeter.brand})
+            <p className="text-sm text-muted-foreground mt-1 font-mono">
+              {dDetail.results.ip_addr} &bull; {dDetail.results.powermeter.seri} ({dDetail.results.powermeter.brand})
             </p>
           </div>
           <div>
@@ -71,23 +71,23 @@ function PreviewPerangkat() {
               <Link
                 to="/perangkat/$perangkatId"
                 params={{ perangkatId }}
-                className="transition flex gap-2 items-center p-3 px-5 border-b-2 border-transparent hover:bg-gray-200 hover:border-b-blue-500"
+                className="transition-all flex gap-2 items-center p-3 px-6 border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/5 hover:border-b-primary/50"
                 activeOptions={{
                   exact: true,
                 }}
                 activeProps={{
-                  className: 'bg-gray-200 border-b-blue-500',
+                  className: 'bg-foreground/5 border-b-primary text-primary',
                 }}
               >
-                <ChartPieIcon className="size-4 fill-white/20" />
+                <ChartPieIcon className="size-4" />
                 Dashboard
               </Link>
               <Link
                 to="/perangkat/$perangkatId/data"
                 params={{ perangkatId }}
-                className="transition flex gap-2 items-center p-3 px-5 border-b-2 border-transparent hover:bg-gray-200 hover:border-b-2 hover:border-b-blue-500"
+                className="transition-all flex gap-2 items-center p-3 px-6 border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/5 hover:border-b-primary/50"
                 activeProps={{
-                  className: 'bg-gray-200 border-b-blue-500',
+                  className: 'bg-foreground/5 border-b-primary text-primary',
                 }}
               >
                 <CircleStackIcon className="size-4" />
@@ -96,24 +96,37 @@ function PreviewPerangkat() {
               <Link
                 to="/perangkat/$perangkatId/arsip"
                 params={{ perangkatId }}
-                className="transition flex gap-2 items-center p-3 px-5 border-b-2 border-transparent hover:bg-gray-200 hover:border-b-2 hover:border-b-blue-500"
+                className="transition-all flex gap-2 items-center p-3 px-6 border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/5 hover:border-b-primary/50"
                 activeProps={{
-                  className: 'bg-gray-200 border-b-blue-500',
+                  className: 'bg-foreground/5 border-b-primary text-primary',
                 }}
               >
                 <ArchiveBoxIcon className="size-4" />
                 Arsip
               </Link>
+              <Link
+                to="/perangkat/$perangkatId/logs"
+                params={{ perangkatId }}
+                className="transition-all flex gap-2 items-center p-3 px-6 border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/5 hover:border-b-primary/50"
+                activeProps={{
+                  className: 'bg-foreground/5 border-b-primary text-primary',
+                }}
+              >
+                <CodeBracketSquareIcon className="size-4" />
+                Logs
+              </Link>
             </>
           </PerangkatSubMenu>
         </PerangkatSubHeadingPanel>
-        <Outlet />
-        <MatchRoute to="/perangkat/$perangkatId">
-          <PerangkatEnergyOverview
-            token={user.token}
-            perangkatId={perangkatId}
-          />
-        </MatchRoute>
-      </>
+        <div className="flex-1 p-4 sm:p-6 overflow-auto">
+          <Outlet />
+          <MatchRoute to="/perangkat/$perangkatId">
+            <PerangkatEnergyOverview
+              token={user.token}
+              perangkatId={perangkatId}
+            />
+          </MatchRoute>
+        </div>
+      </div>
     )
 }

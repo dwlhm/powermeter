@@ -3,23 +3,23 @@ from typing import Annotated
 from pydantic import BaseModel
 import base64
 
-from user.internal import get_current_user
 from dependencies import oauth2_scheme
 from configuration.config import load_config
+from permission import require_permission
 from .db import get_all, new, get_by_id, update, remove
 
 
 router = APIRouter(
     prefix="/gedung",
     tags=["Gedung"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(oauth2_scheme)]
 )
 
 class Gedung(BaseModel):
     name: str
     unit: str
 
-@router.get("/")
+@router.get("/", dependencies=[Depends(require_permission("gedung.view"))])
 async def get_all_gedung():
     result = get_all(load_config())
     if (result.get("error")): raise HTTPException(
@@ -31,7 +31,7 @@ async def get_all_gedung():
         "results": result.get("data")
     }
 
-@router.get("/{id}")
+@router.get("/{id}", dependencies=[Depends(require_permission("gedung.view"))])
 async def get_gedung(id: str):
     result = get_by_id(id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -43,7 +43,7 @@ async def get_gedung(id: str):
         "results": result.get("data")
     }
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_permission("gedung.create"))])
 async def insert_gedung(gedung: Gedung):
     result = new(gedung.name, gedung.unit, load_config())
     if (result.get("error")): raise HTTPException(
@@ -61,7 +61,7 @@ async def insert_gedung(gedung: Gedung):
         }
     }
 
-@router.put("/{id}")
+@router.put("/{id}", dependencies=[Depends(require_permission("gedung.edit"))])
 async def update_gedung(id: str, gedung: Gedung):
     result = update(gedung.name, gedung.unit, id, load_config())
     if (result.get("error")): raise HTTPException(
@@ -79,7 +79,7 @@ async def update_gedung(id: str, gedung: Gedung):
         }
     }
 
-@router.delete("/{id}")
+@router.delete("/{id}", dependencies=[Depends(require_permission("gedung.delete"))])
 async def delete_gedung(id: str):
     result = remove(id, load_config())
     if (result.get("error")): raise HTTPException(

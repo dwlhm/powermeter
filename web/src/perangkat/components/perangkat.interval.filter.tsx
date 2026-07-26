@@ -122,7 +122,7 @@ export const CompPerangkatIntervalFilterBasic = (
 ) => {
   return (
     <Menu>
-      <MenuButton className="bg-gray-900 text-gray-200 text-sm py-2 px-5 rounded w-fit flex gap-4 capitalize items-center">
+      <MenuButton className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 text-sm py-2 px-5 rounded-lg w-fit flex gap-4 capitalize items-center transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">
         {props.interval} <ChevronDownIcon className="size-5" />
       </MenuButton>
       <Transition
@@ -135,11 +135,11 @@ export const CompPerangkatIntervalFilterBasic = (
       >
         <MenuItems
           anchor="bottom start"
-          className="bg-gray-900 text-gray-200 text-sm p-2 mt-2 rounded min-w-36 border border-gray-700"
+          className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm p-2 mt-2 rounded-lg min-w-36 border border-slate-200 dark:border-slate-700 shadow-lg"
         >
           <MenuItem>
             <Button
-              className="w-full text-left block p-2 mb-2 hover:bg-gray-500 rounded"
+              className="w-full text-left block p-2 mb-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               onClick={() => props.onIntervalChanged("hourly")}
             >
               Hourly
@@ -147,7 +147,7 @@ export const CompPerangkatIntervalFilterBasic = (
           </MenuItem>
           <MenuItem>
             <Button
-              className="w-full text-left block p-2 mb-2 hover:bg-gray-500 rounded"
+              className="w-full text-left block p-2 mb-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               onClick={() => props.onIntervalChanged("daily")}
             >
               Daily
@@ -155,7 +155,7 @@ export const CompPerangkatIntervalFilterBasic = (
           </MenuItem>
           <MenuItem>
             <Button
-              className="w-full text-left block p-2 mb-2 hover:bg-gray-500 rounded"
+              className="w-full text-left block p-2 mb-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               onClick={() => props.onIntervalChanged("weekly")}
             >
               Weekly
@@ -163,7 +163,7 @@ export const CompPerangkatIntervalFilterBasic = (
           </MenuItem>
           <MenuItem>
             <Button
-              className="w-full text-left block p-2 mb-2 hover:bg-gray-500 rounded"
+              className="w-full text-left block p-2 mb-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               onClick={() => props.onIntervalChanged("monthly")}
             >
               Monthly
@@ -171,7 +171,7 @@ export const CompPerangkatIntervalFilterBasic = (
           </MenuItem>
           <MenuItem>
             <Button
-              className="w-full text-left block p-2 hover:bg-gray-500 rounded"
+              className="w-full text-left block p-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               onClick={() => props.onIntervalChanged("yearly")}
             >
               Yearly

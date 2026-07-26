@@ -4,7 +4,13 @@ module.exports = {
     script : "python ./read_modbus.py",
     instances: 1,
     autorestart: false,
-    time: true
+    time: true,
+    env: {
+      // Set to true to generate dummy data instead of talking to real powermeters.
+      DUMMY_MODE: false,
+      MODBUS_READ_INTERVAL: 60,
+      MODBUS_MAX_WORKERS: 60,
+    }
   },{
     name   : "hourly_avg_cron",
     script : "python ./corn_calc_data_hourly.py",

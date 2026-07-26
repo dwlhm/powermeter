@@ -1,7 +1,7 @@
 import axios from "axios";
 import { QueryFunctionContext } from "react-query";
 import { Token } from "../auth";
-import { Api } from "./internal";
+import { Api, isNoDataError } from "./internal";
 import { Gedung } from "./gedung";
 import { Powermeter } from "./powermeter";
 
@@ -44,8 +44,17 @@ export async function getDevices(
     },
   };
 
-  const { data } = await axios(config);
-  return data as Api<DeviceDetail[]>;
+  try {
+    const { data } = await axios(config);
+    return data as Api<DeviceDetail[]>;
+  } catch (error) {
+    // Server mengembalikan 400 "no data" ketika belum ada perangkat
+    // terdaftar; perlakukan sebagai koleksi kosong, bukan error.
+    if (isNoDataError(error)) {
+      return { status: "success", results: [] };
+    }
+    throw error;
+  }
 }
 
 export async function getDeviceDetail(
@@ -53,7 +62,7 @@ export async function getDeviceDetail(
 ): Promise<Api<DeviceDetail>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}/`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -106,7 +115,7 @@ export async function updateDevices(
   };
 
   const { data } = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/device/${props.data.id}/`,
+    `${import.meta.env.VITE_BACKEND_URL}/device/${props.data.id}`,
     config,
   );
 
@@ -125,7 +134,7 @@ export async function removeDevices(props: {
   };
 
   const res = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/device/${props.id}/`,
+    `${import.meta.env.VITE_BACKEND_URL}/device/${props.id}`,
     config,
   );
 
@@ -143,7 +152,7 @@ export async function getSensorData(
   };
 
   const { data } = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}/latest/`,
+    `${import.meta.env.VITE_BACKEND_URL}/device/${context.queryKey[2]}/latest`,
     config,
   );
   return data;
@@ -160,11 +169,13 @@ export async function getDatasheetDevices(
   };
 
   const { data } = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/datasheet/${context.queryKey[2] == "undefined" ? "AW9L" : context.queryKey[2]}/`,
+    `${import.meta.env.VITE_BACKEND_URL}/datasheet/${context.queryKey[2] === "undefined" ? "AW9L" : context.queryKey[2]}`,
     config,
   );
   return data;
 }
+
+export type DeviceLogType = "error" | "warning" | "info" | string;
 
 export async function getDeviceLogs(
   context: QueryFunctionContext,
@@ -173,6 +184,12 @@ export async function getDeviceLogs(
     method: "get",
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
+    },
+    params: {
+      type: context.queryKey[3] || undefined,
+      from_date: context.queryKey[4] || undefined,
+      to_date: context.queryKey[5] || undefined,
+      limit: context.queryKey[6] || undefined,
     },
   };
 

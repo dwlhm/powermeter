@@ -2,16 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 217.2 91.2% 59.8%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 5.9% 10%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 5.9% 10%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 4% 65.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 217.2 91.2% 59.8%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 h2 {
   @apply text-xl font-semibold
 }
 
 #root {
-  @apply flex flex-col min-h-screen
+  @apply flex flex-col min-h-screen bg-background text-foreground antialiased selection:bg-primary/30
 }
 
 .perangkat.active {
-  @apply bg-slate-900/50 rounded sticky top-12 sm:top-0 backdrop-blur-sm
+  @apply bg-primary/10 rounded sticky top-12 sm:top-0 backdrop-blur-sm
 }
 
 .live-data li {
@@ -21,13 +71,13 @@ h2 {
   @apply bg-white/10
 }
 .register-table {
-  @apply p-2 grid grid-cols-6 text-center
+  @apply p-2 grid grid-cols-6 items-center text-center border-b border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200
 }
 .register-table input, .register-table select {
-  @apply py-2 px-4 mx-1 rounded text-center
+  @apply py-2 px-4 mx-1 rounded text-center bg-transparent dark:bg-slate-800 border-slate-300 dark:border-slate-600
 }
 .register-table:nth-child(even) {
-  @apply bg-gray-200
+  @apply bg-slate-50 dark:bg-slate-900/30
 }
 .register-table.add-edit-register {
   @apply bg-blue-900 py-3
@@ -45,10 +95,10 @@ h2 {
   @apply border-gray-200
 }
 .device-status {
-  @apply flex items-center text-sm text-green-900 z-0
+  @apply flex items-center text-sm text-green-700 dark:text-green-400 z-0
 }
 .device-status.offline {
-  @apply text-red-900
+  @apply text-red-700 dark:text-red-400
 }
 .device-status::before {
   content: " ";
@@ -58,11 +108,11 @@ h2 {
   border-radius: 10px;
   margin-right: 12px;
   box-shadow: 0 0 0px 4px #00800069;
-  @apply bg-green-900
+  @apply bg-green-600 dark:bg-green-500
 }
 .device-status.offline::before {
   box-shadow: 0 0 0px 4px #80000069;
-  @apply bg-red-900
+  @apply bg-red-600 dark:bg-red-500
 } 
 .date_time div:first-child .MuiInputBase-root {
   @apply rounded-r-none rounded-l border-none

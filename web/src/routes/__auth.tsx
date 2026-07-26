@@ -11,32 +11,22 @@ import { useEffect } from "react";
 
 export const Route = createFileRoute("/__auth")({
   beforeLoad: async ({ context, location }) => {
-    const config = {
-      method: "get",
-      url: `${import.meta.env.VITE_BACKEND_URL}/users/me`,
-      headers: {
-        Authorization: `Bearer ${context.auth.token}`,
-      },
-    };
-
-    axios(config)
-      .then(() => {})
-      .catch(() => {
-        setStoredToken(null);
-        context.auth.isAuthenticated = false;
-        redirect({
-          to: "/login",
-          search: {
-            redirect: location.href,
-          },
-        });
-      });
-    if (!context.auth.isAuthenticated && !localStorage.getItem("auth.token")) {
+    const token = context.auth.token || localStorage.getItem("auth.token");
+    if (!token) {
       throw redirect({
         to: "/login",
-        search: {
-          redirect: location.href,
-        },
+        search: { redirect: location.href },
+      });
+    }
+    try {
+      await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {
+      setStoredToken(null);
+      throw redirect({
+        to: "/login",
+        search: { redirect: location.href },
       });
     }
   },
@@ -49,20 +39,12 @@ function AuthLayout() {
   const auth = useAuth();
 
   useEffect(() => {
-    // const { isError } = useQuery<Api<UserProfile>, AxiosError>({
-    //   queryKey: ["user.profile", auth.token],
-    //   queryFn: getProfile,
-    //   retry: 0,
-    // });
-    // if (isError) {
-    //   auth.isAuthenticated = false;
-    //   setStoredToken(null);
-    //   auth.token = null;
-    //   router.invalidate().finally(() => {
-    //     navigate({ to: "/" });
-    //   });
-    // }
-  }, [auth]);
+    if (!auth.isAuthenticated) {
+      router.invalidate().finally(() => {
+        navigate({ to: "/login" });
+      });
+    }
+  }, [auth.isAuthenticated]);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {

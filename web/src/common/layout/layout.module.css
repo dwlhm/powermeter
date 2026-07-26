@@ -1,3 +1,6 @@
 .card_panel a {
-    @apply transition py-1 px-4 flex items-center gap-4 text-gray-100 bg-blue-900 rounded hover:bg-blue-800 border-4 border-blue-900 hover:shadow-md
+    @apply transition p-4 flex items-center gap-4 rounded-xl shadow-sm border relative overflow-hidden;
+    @apply bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50;
+    @apply hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-800;
+    @apply text-slate-700 dark:text-slate-200;
 }

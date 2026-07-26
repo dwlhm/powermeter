@@ -24,7 +24,6 @@ const IndexLazyImport = createFileRoute('/')()
 const authUsersLazyImport = createFileRoute('/__auth/users')()
 const authPengaturanLazyImport = createFileRoute('/__auth/pengaturan')()
 const authAboutLazyImport = createFileRoute('/__auth/about')()
-const authUsersRegisterLazyImport = createFileRoute('/__auth/users/register')()
 const authUsersBaruLazyImport = createFileRoute('/__auth/users/baru')()
 const authPerangkatBaruLazyImport = createFileRoute('/__auth/perangkat/baru')()
 const authPengaturanUnitLazyImport = createFileRoute(
@@ -66,9 +65,6 @@ const authPerangkatPerangkatIdArsipLazyImport = createFileRoute(
 const authPengaturanUnitBaruLazyImport = createFileRoute(
   '/__auth/pengaturan/unit/baru',
 )()
-const authPengaturanUnitUnitIdLazyImport = createFileRoute(
-  '/__auth/pengaturan/unit/$unitId',
-)()
 const authPengaturanTarifListrikEditLazyImport = createFileRoute(
   '/__auth/pengaturan/tarif-listrik/edit',
 )()
@@ -84,17 +80,8 @@ const authPengaturanPowermeterPowermeterIdLazyImport = createFileRoute(
 const authPengaturanKampusBaruLazyImport = createFileRoute(
   '/__auth/pengaturan/kampus/baru',
 )()
-const authPengaturanKampusKampusIdLazyImport = createFileRoute(
-  '/__auth/pengaturan/kampus/$kampusId',
-)()
 const authPengaturanGedungBaruLazyImport = createFileRoute(
   '/__auth/pengaturan/gedung/baru',
-)()
-const authPengaturanGedungGedungIdLazyImport = createFileRoute(
-  '/__auth/pengaturan/gedung/$gedungId',
-)()
-const authPengaturanUnitUnitIdHapusLazyImport = createFileRoute(
-  '/__auth/pengaturan/unit/$unitId/hapus',
 )()
 const authPengaturanUnitUnitIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/unit/$unitId/edit',
@@ -102,23 +89,14 @@ const authPengaturanUnitUnitIdEditLazyImport = createFileRoute(
 const authPengaturanRoleRoleIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/role/$roleId/edit',
 )()
-const authPengaturanPowermeterPowermeterIdRegisterLazyImport = createFileRoute(
-  '/__auth/pengaturan/powermeter/$powermeterId/register',
-)()
 const authPengaturanPowermeterPowermeterIdHapusLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter/$powermeterId/hapus',
 )()
 const authPengaturanPowermeterPowermeterIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/powermeter/$powermeterId/edit',
 )()
-const authPengaturanKampusKampusIdHapusLazyImport = createFileRoute(
-  '/__auth/pengaturan/kampus/$kampusId/hapus',
-)()
 const authPengaturanKampusKampusIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/kampus/$kampusId/edit',
-)()
-const authPengaturanGedungGedungIdHapusLazyImport = createFileRoute(
-  '/__auth/pengaturan/gedung/$gedungId/hapus',
 )()
 const authPengaturanGedungGedungIdEditLazyImport = createFileRoute(
   '/__auth/pengaturan/gedung/$gedungId/edit',
@@ -176,15 +154,6 @@ const authPerangkatRoute = authPerangkatImport.update({
   path: '/perangkat',
   getParentRoute: () => authRoute,
 } as any)
-
-const authUsersRegisterLazyRoute = authUsersRegisterLazyImport
-  .update({
-    path: '/register',
-    getParentRoute: () => authUsersLazyRoute,
-  } as any)
-  .lazy(() =>
-    import('./routes/__auth/users/register.lazy').then((d) => d.Route),
-  )
 
 const authUsersBaruLazyRoute = authUsersBaruLazyImport
   .update({
@@ -341,15 +310,6 @@ const authPengaturanUnitBaruLazyRoute = authPengaturanUnitBaruLazyImport
     import('./routes/__auth/pengaturan/unit/baru.lazy').then((d) => d.Route),
   )
 
-const authPengaturanUnitUnitIdLazyRoute = authPengaturanUnitUnitIdLazyImport
-  .update({
-    path: '/$unitId',
-    getParentRoute: () => authPengaturanUnitLazyRoute,
-  } as any)
-  .lazy(() =>
-    import('./routes/__auth/pengaturan/unit/$unitId.lazy').then((d) => d.Route),
-  )
-
 const authPengaturanTarifListrikEditLazyRoute =
   authPengaturanTarifListrikEditLazyImport
     .update({
@@ -404,18 +364,6 @@ const authPengaturanKampusBaruLazyRoute = authPengaturanKampusBaruLazyImport
     import('./routes/__auth/pengaturan/kampus.baru.lazy').then((d) => d.Route),
   )
 
-const authPengaturanKampusKampusIdLazyRoute =
-  authPengaturanKampusKampusIdLazyImport
-    .update({
-      path: '/$kampusId',
-      getParentRoute: () => authPengaturanKampusLazyRoute,
-    } as any)
-    .lazy(() =>
-      import('./routes/__auth/pengaturan/kampus/$kampusId.lazy').then(
-        (d) => d.Route,
-      ),
-    )
-
 const authPengaturanGedungBaruLazyRoute = authPengaturanGedungBaruLazyImport
   .update({
     path: '/baru',
@@ -425,35 +373,11 @@ const authPengaturanGedungBaruLazyRoute = authPengaturanGedungBaruLazyImport
     import('./routes/__auth/pengaturan/gedung/baru.lazy').then((d) => d.Route),
   )
 
-const authPengaturanGedungGedungIdLazyRoute =
-  authPengaturanGedungGedungIdLazyImport
-    .update({
-      path: '/$gedungId',
-      getParentRoute: () => authPengaturanGedungLazyRoute,
-    } as any)
-    .lazy(() =>
-      import('./routes/__auth/pengaturan/gedung/$gedungId.lazy').then(
-        (d) => d.Route,
-      ),
-    )
-
-const authPengaturanUnitUnitIdHapusLazyRoute =
-  authPengaturanUnitUnitIdHapusLazyImport
-    .update({
-      path: '/hapus',
-      getParentRoute: () => authPengaturanUnitUnitIdLazyRoute,
-    } as any)
-    .lazy(() =>
-      import('./routes/__auth/pengaturan/unit/$unitId.hapus.lazy').then(
-        (d) => d.Route,
-      ),
-    )
-
 const authPengaturanUnitUnitIdEditLazyRoute =
   authPengaturanUnitUnitIdEditLazyImport
     .update({
-      path: '/edit',
-      getParentRoute: () => authPengaturanUnitUnitIdLazyRoute,
+      path: '/$unitId/edit',
+      getParentRoute: () => authPengaturanUnitLazyRoute,
     } as any)
     .lazy(() =>
       import('./routes/__auth/pengaturan/unit/$unitId.edit.lazy').then(
@@ -471,18 +395,6 @@ const authPengaturanRoleRoleIdEditLazyRoute =
       import('./routes/__auth/pengaturan/role/$roleId.edit.lazy').then(
         (d) => d.Route,
       ),
-    )
-
-const authPengaturanPowermeterPowermeterIdRegisterLazyRoute =
-  authPengaturanPowermeterPowermeterIdRegisterLazyImport
-    .update({
-      path: '/register',
-      getParentRoute: () => authPengaturanPowermeterPowermeterIdLazyRoute,
-    } as any)
-    .lazy(() =>
-      import(
-        './routes/__auth/pengaturan/powermeter/$powermeterId.register.lazy'
-      ).then((d) => d.Route),
     )
 
 const authPengaturanPowermeterPowermeterIdHapusLazyRoute =
@@ -509,23 +421,11 @@ const authPengaturanPowermeterPowermeterIdEditLazyRoute =
       ).then((d) => d.Route),
     )
 
-const authPengaturanKampusKampusIdHapusLazyRoute =
-  authPengaturanKampusKampusIdHapusLazyImport
-    .update({
-      path: '/hapus',
-      getParentRoute: () => authPengaturanKampusKampusIdLazyRoute,
-    } as any)
-    .lazy(() =>
-      import('./routes/__auth/pengaturan/kampus/$kampusId.hapus.lazy').then(
-        (d) => d.Route,
-      ),
-    )
-
 const authPengaturanKampusKampusIdEditLazyRoute =
   authPengaturanKampusKampusIdEditLazyImport
     .update({
-      path: '/edit',
-      getParentRoute: () => authPengaturanKampusKampusIdLazyRoute,
+      path: '/$kampusId/edit',
+      getParentRoute: () => authPengaturanKampusLazyRoute,
     } as any)
     .lazy(() =>
       import('./routes/__auth/pengaturan/kampus/$kampusId.edit.lazy').then(
@@ -533,23 +433,11 @@ const authPengaturanKampusKampusIdEditLazyRoute =
       ),
     )
 
-const authPengaturanGedungGedungIdHapusLazyRoute =
-  authPengaturanGedungGedungIdHapusLazyImport
-    .update({
-      path: '/hapus',
-      getParentRoute: () => authPengaturanGedungGedungIdLazyRoute,
-    } as any)
-    .lazy(() =>
-      import('./routes/__auth/pengaturan/gedung/$gedungId.hapus.lazy').then(
-        (d) => d.Route,
-      ),
-    )
-
 const authPengaturanGedungGedungIdEditLazyRoute =
   authPengaturanGedungGedungIdEditLazyImport
     .update({
-      path: '/edit',
-      getParentRoute: () => authPengaturanGedungGedungIdLazyRoute,
+      path: '/$gedungId/edit',
+      getParentRoute: () => authPengaturanGedungLazyRoute,
     } as any)
     .lazy(() =>
       import('./routes/__auth/pengaturan/gedung/$gedungId.edit.lazy').then(
@@ -560,9 +448,8 @@ const authPengaturanGedungGedungIdEditLazyRoute =
 const authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute =
   authPengaturanPowermeterPowermeterIdRegisterBaruLazyImport
     .update({
-      path: '/baru',
-      getParentRoute: () =>
-        authPengaturanPowermeterPowermeterIdRegisterLazyRoute,
+      path: '/register/baru',
+      getParentRoute: () => authPengaturanPowermeterPowermeterIdLazyRoute,
     } as any)
     .lazy(() =>
       import(
@@ -573,9 +460,8 @@ const authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute =
 const authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute =
   authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyImport
     .update({
-      path: '/$registerId/hapus',
-      getParentRoute: () =>
-        authPengaturanPowermeterPowermeterIdRegisterLazyRoute,
+      path: '/register/$registerId/hapus',
+      getParentRoute: () => authPengaturanPowermeterPowermeterIdLazyRoute,
     } as any)
     .lazy(() =>
       import(
@@ -586,9 +472,8 @@ const authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute =
 const authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute =
   authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyImport
     .update({
-      path: '/$registerId/edit',
-      getParentRoute: () =>
-        authPengaturanPowermeterPowermeterIdRegisterLazyRoute,
+      path: '/register/$registerId/edit',
+      getParentRoute: () => authPengaturanPowermeterPowermeterIdLazyRoute,
     } as any)
     .lazy(() =>
       import(
@@ -712,33 +597,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authUsersBaruLazyImport
       parentRoute: typeof authUsersLazyImport
     }
-    '/__auth/users/register': {
-      id: '/__auth/users/register'
-      path: '/register'
-      fullPath: '/users/register'
-      preLoaderRoute: typeof authUsersRegisterLazyImport
-      parentRoute: typeof authUsersLazyImport
-    }
-    '/__auth/pengaturan/gedung/$gedungId': {
-      id: '/__auth/pengaturan/gedung/$gedungId'
-      path: '/$gedungId'
-      fullPath: '/pengaturan/gedung/$gedungId'
-      preLoaderRoute: typeof authPengaturanGedungGedungIdLazyImport
-      parentRoute: typeof authPengaturanGedungLazyImport
-    }
     '/__auth/pengaturan/gedung/baru': {
       id: '/__auth/pengaturan/gedung/baru'
       path: '/baru'
       fullPath: '/pengaturan/gedung/baru'
       preLoaderRoute: typeof authPengaturanGedungBaruLazyImport
       parentRoute: typeof authPengaturanGedungLazyImport
-    }
-    '/__auth/pengaturan/kampus/$kampusId': {
-      id: '/__auth/pengaturan/kampus/$kampusId'
-      path: '/$kampusId'
-      fullPath: '/pengaturan/kampus/$kampusId'
-      preLoaderRoute: typeof authPengaturanKampusKampusIdLazyImport
-      parentRoute: typeof authPengaturanKampusLazyImport
     }
     '/__auth/pengaturan/kampus/baru': {
       id: '/__auth/pengaturan/kampus/baru'
@@ -774,13 +638,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/pengaturan/tarif-listrik/edit'
       preLoaderRoute: typeof authPengaturanTarifListrikEditLazyImport
       parentRoute: typeof authPengaturanTarifListrikLazyImport
-    }
-    '/__auth/pengaturan/unit/$unitId': {
-      id: '/__auth/pengaturan/unit/$unitId'
-      path: '/$unitId'
-      fullPath: '/pengaturan/unit/$unitId'
-      preLoaderRoute: typeof authPengaturanUnitUnitIdLazyImport
-      parentRoute: typeof authPengaturanUnitLazyImport
     }
     '/__auth/pengaturan/unit/baru': {
       id: '/__auth/pengaturan/unit/baru'
@@ -833,31 +690,17 @@ declare module '@tanstack/react-router' {
     }
     '/__auth/pengaturan/gedung/$gedungId/edit': {
       id: '/__auth/pengaturan/gedung/$gedungId/edit'
-      path: '/edit'
+      path: '/$gedungId/edit'
       fullPath: '/pengaturan/gedung/$gedungId/edit'
       preLoaderRoute: typeof authPengaturanGedungGedungIdEditLazyImport
-      parentRoute: typeof authPengaturanGedungGedungIdLazyImport
-    }
-    '/__auth/pengaturan/gedung/$gedungId/hapus': {
-      id: '/__auth/pengaturan/gedung/$gedungId/hapus'
-      path: '/hapus'
-      fullPath: '/pengaturan/gedung/$gedungId/hapus'
-      preLoaderRoute: typeof authPengaturanGedungGedungIdHapusLazyImport
-      parentRoute: typeof authPengaturanGedungGedungIdLazyImport
+      parentRoute: typeof authPengaturanGedungLazyImport
     }
     '/__auth/pengaturan/kampus/$kampusId/edit': {
       id: '/__auth/pengaturan/kampus/$kampusId/edit'
-      path: '/edit'
+      path: '/$kampusId/edit'
       fullPath: '/pengaturan/kampus/$kampusId/edit'
       preLoaderRoute: typeof authPengaturanKampusKampusIdEditLazyImport
-      parentRoute: typeof authPengaturanKampusKampusIdLazyImport
-    }
-    '/__auth/pengaturan/kampus/$kampusId/hapus': {
-      id: '/__auth/pengaturan/kampus/$kampusId/hapus'
-      path: '/hapus'
-      fullPath: '/pengaturan/kampus/$kampusId/hapus'
-      preLoaderRoute: typeof authPengaturanKampusKampusIdHapusLazyImport
-      parentRoute: typeof authPengaturanKampusKampusIdLazyImport
+      parentRoute: typeof authPengaturanKampusLazyImport
     }
     '/__auth/pengaturan/powermeter/$powermeterId/edit': {
       id: '/__auth/pengaturan/powermeter/$powermeterId/edit'
@@ -873,13 +716,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdHapusLazyImport
       parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
     }
-    '/__auth/pengaturan/powermeter/$powermeterId/register': {
-      id: '/__auth/pengaturan/powermeter/$powermeterId/register'
-      path: '/register'
-      fullPath: '/pengaturan/powermeter/$powermeterId/register'
-      preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyImport
-      parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
-    }
     '/__auth/pengaturan/role/$roleId/edit': {
       id: '/__auth/pengaturan/role/$roleId/edit'
       path: '/$roleId/edit'
@@ -889,38 +725,31 @@ declare module '@tanstack/react-router' {
     }
     '/__auth/pengaturan/unit/$unitId/edit': {
       id: '/__auth/pengaturan/unit/$unitId/edit'
-      path: '/edit'
+      path: '/$unitId/edit'
       fullPath: '/pengaturan/unit/$unitId/edit'
       preLoaderRoute: typeof authPengaturanUnitUnitIdEditLazyImport
-      parentRoute: typeof authPengaturanUnitUnitIdLazyImport
-    }
-    '/__auth/pengaturan/unit/$unitId/hapus': {
-      id: '/__auth/pengaturan/unit/$unitId/hapus'
-      path: '/hapus'
-      fullPath: '/pengaturan/unit/$unitId/hapus'
-      preLoaderRoute: typeof authPengaturanUnitUnitIdHapusLazyImport
-      parentRoute: typeof authPengaturanUnitUnitIdLazyImport
+      parentRoute: typeof authPengaturanUnitLazyImport
     }
     '/__auth/pengaturan/powermeter/$powermeterId/register/baru': {
       id: '/__auth/pengaturan/powermeter/$powermeterId/register/baru'
-      path: '/baru'
+      path: '/register/baru'
       fullPath: '/pengaturan/powermeter/$powermeterId/register/baru'
       preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyImport
-      parentRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyImport
+      parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
     }
     '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit': {
       id: '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit'
-      path: '/$registerId/edit'
+      path: '/register/$registerId/edit'
       fullPath: '/pengaturan/powermeter/$powermeterId/register/$registerId/edit'
       preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyImport
-      parentRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyImport
+      parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
     }
     '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus': {
       id: '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus'
-      path: '/$registerId/hapus'
+      path: '/register/$registerId/hapus'
       fullPath: '/pengaturan/powermeter/$powermeterId/register/$registerId/hapus'
       preLoaderRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyImport
-      parentRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyImport
+      parentRoute: typeof authPengaturanPowermeterPowermeterIdLazyImport
     }
   }
 }
@@ -968,34 +797,16 @@ const authPerangkatRouteWithChildren = authPerangkatRoute._addFileChildren(
   authPerangkatRouteChildren,
 )
 
-interface authPengaturanGedungGedungIdLazyRouteChildren {
-  authPengaturanGedungGedungIdEditLazyRoute: typeof authPengaturanGedungGedungIdEditLazyRoute
-  authPengaturanGedungGedungIdHapusLazyRoute: typeof authPengaturanGedungGedungIdHapusLazyRoute
-}
-
-const authPengaturanGedungGedungIdLazyRouteChildren: authPengaturanGedungGedungIdLazyRouteChildren =
-  {
-    authPengaturanGedungGedungIdEditLazyRoute:
-      authPengaturanGedungGedungIdEditLazyRoute,
-    authPengaturanGedungGedungIdHapusLazyRoute:
-      authPengaturanGedungGedungIdHapusLazyRoute,
-  }
-
-const authPengaturanGedungGedungIdLazyRouteWithChildren =
-  authPengaturanGedungGedungIdLazyRoute._addFileChildren(
-    authPengaturanGedungGedungIdLazyRouteChildren,
-  )
-
 interface authPengaturanGedungLazyRouteChildren {
-  authPengaturanGedungGedungIdLazyRoute: typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   authPengaturanGedungBaruLazyRoute: typeof authPengaturanGedungBaruLazyRoute
+  authPengaturanGedungGedungIdEditLazyRoute: typeof authPengaturanGedungGedungIdEditLazyRoute
 }
 
 const authPengaturanGedungLazyRouteChildren: authPengaturanGedungLazyRouteChildren =
   {
-    authPengaturanGedungGedungIdLazyRoute:
-      authPengaturanGedungGedungIdLazyRouteWithChildren,
     authPengaturanGedungBaruLazyRoute: authPengaturanGedungBaruLazyRoute,
+    authPengaturanGedungGedungIdEditLazyRoute:
+      authPengaturanGedungGedungIdEditLazyRoute,
   }
 
 const authPengaturanGedungLazyRouteWithChildren =
@@ -1003,34 +814,16 @@ const authPengaturanGedungLazyRouteWithChildren =
     authPengaturanGedungLazyRouteChildren,
   )
 
-interface authPengaturanKampusKampusIdLazyRouteChildren {
-  authPengaturanKampusKampusIdEditLazyRoute: typeof authPengaturanKampusKampusIdEditLazyRoute
-  authPengaturanKampusKampusIdHapusLazyRoute: typeof authPengaturanKampusKampusIdHapusLazyRoute
-}
-
-const authPengaturanKampusKampusIdLazyRouteChildren: authPengaturanKampusKampusIdLazyRouteChildren =
-  {
-    authPengaturanKampusKampusIdEditLazyRoute:
-      authPengaturanKampusKampusIdEditLazyRoute,
-    authPengaturanKampusKampusIdHapusLazyRoute:
-      authPengaturanKampusKampusIdHapusLazyRoute,
-  }
-
-const authPengaturanKampusKampusIdLazyRouteWithChildren =
-  authPengaturanKampusKampusIdLazyRoute._addFileChildren(
-    authPengaturanKampusKampusIdLazyRouteChildren,
-  )
-
 interface authPengaturanKampusLazyRouteChildren {
-  authPengaturanKampusKampusIdLazyRoute: typeof authPengaturanKampusKampusIdLazyRouteWithChildren
   authPengaturanKampusBaruLazyRoute: typeof authPengaturanKampusBaruLazyRoute
+  authPengaturanKampusKampusIdEditLazyRoute: typeof authPengaturanKampusKampusIdEditLazyRoute
 }
 
 const authPengaturanKampusLazyRouteChildren: authPengaturanKampusLazyRouteChildren =
   {
-    authPengaturanKampusKampusIdLazyRoute:
-      authPengaturanKampusKampusIdLazyRouteWithChildren,
     authPengaturanKampusBaruLazyRoute: authPengaturanKampusBaruLazyRoute,
+    authPengaturanKampusKampusIdEditLazyRoute:
+      authPengaturanKampusKampusIdEditLazyRoute,
   }
 
 const authPengaturanKampusLazyRouteWithChildren =
@@ -1038,31 +831,12 @@ const authPengaturanKampusLazyRouteWithChildren =
     authPengaturanKampusLazyRouteChildren,
   )
 
-interface authPengaturanPowermeterPowermeterIdRegisterLazyRouteChildren {
-  authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
-  authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute
-  authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute
-}
-
-const authPengaturanPowermeterPowermeterIdRegisterLazyRouteChildren: authPengaturanPowermeterPowermeterIdRegisterLazyRouteChildren =
-  {
-    authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute:
-      authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute,
-    authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute:
-      authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute,
-    authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute:
-      authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute,
-  }
-
-const authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren =
-  authPengaturanPowermeterPowermeterIdRegisterLazyRoute._addFileChildren(
-    authPengaturanPowermeterPowermeterIdRegisterLazyRouteChildren,
-  )
-
 interface authPengaturanPowermeterPowermeterIdLazyRouteChildren {
   authPengaturanPowermeterPowermeterIdEditLazyRoute: typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   authPengaturanPowermeterPowermeterIdHapusLazyRoute: typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
-  authPengaturanPowermeterPowermeterIdRegisterLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
+  authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
+  authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute
+  authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute: typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute
 }
 
 const authPengaturanPowermeterPowermeterIdLazyRouteChildren: authPengaturanPowermeterPowermeterIdLazyRouteChildren =
@@ -1071,8 +845,12 @@ const authPengaturanPowermeterPowermeterIdLazyRouteChildren: authPengaturanPower
       authPengaturanPowermeterPowermeterIdEditLazyRoute,
     authPengaturanPowermeterPowermeterIdHapusLazyRoute:
       authPengaturanPowermeterPowermeterIdHapusLazyRoute,
-    authPengaturanPowermeterPowermeterIdRegisterLazyRoute:
-      authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren,
+    authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute:
+      authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute,
+    authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute:
+      authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute,
+    authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute:
+      authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute,
   }
 
 const authPengaturanPowermeterPowermeterIdLazyRouteWithChildren =
@@ -1130,34 +908,16 @@ const authPengaturanTarifListrikLazyRouteWithChildren =
     authPengaturanTarifListrikLazyRouteChildren,
   )
 
-interface authPengaturanUnitUnitIdLazyRouteChildren {
-  authPengaturanUnitUnitIdEditLazyRoute: typeof authPengaturanUnitUnitIdEditLazyRoute
-  authPengaturanUnitUnitIdHapusLazyRoute: typeof authPengaturanUnitUnitIdHapusLazyRoute
-}
-
-const authPengaturanUnitUnitIdLazyRouteChildren: authPengaturanUnitUnitIdLazyRouteChildren =
-  {
-    authPengaturanUnitUnitIdEditLazyRoute:
-      authPengaturanUnitUnitIdEditLazyRoute,
-    authPengaturanUnitUnitIdHapusLazyRoute:
-      authPengaturanUnitUnitIdHapusLazyRoute,
-  }
-
-const authPengaturanUnitUnitIdLazyRouteWithChildren =
-  authPengaturanUnitUnitIdLazyRoute._addFileChildren(
-    authPengaturanUnitUnitIdLazyRouteChildren,
-  )
-
 interface authPengaturanUnitLazyRouteChildren {
-  authPengaturanUnitUnitIdLazyRoute: typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   authPengaturanUnitBaruLazyRoute: typeof authPengaturanUnitBaruLazyRoute
+  authPengaturanUnitUnitIdEditLazyRoute: typeof authPengaturanUnitUnitIdEditLazyRoute
 }
 
 const authPengaturanUnitLazyRouteChildren: authPengaturanUnitLazyRouteChildren =
   {
-    authPengaturanUnitUnitIdLazyRoute:
-      authPengaturanUnitUnitIdLazyRouteWithChildren,
     authPengaturanUnitBaruLazyRoute: authPengaturanUnitBaruLazyRoute,
+    authPengaturanUnitUnitIdEditLazyRoute:
+      authPengaturanUnitUnitIdEditLazyRoute,
   }
 
 const authPengaturanUnitLazyRouteWithChildren =
@@ -1190,13 +950,11 @@ const authPengaturanLazyRouteWithChildren =
 
 interface authUsersLazyRouteChildren {
   authUsersBaruLazyRoute: typeof authUsersBaruLazyRoute
-  authUsersRegisterLazyRoute: typeof authUsersRegisterLazyRoute
   authUsersUserIdEditLazyRoute: typeof authUsersUserIdEditLazyRoute
 }
 
 const authUsersLazyRouteChildren: authUsersLazyRouteChildren = {
   authUsersBaruLazyRoute: authUsersBaruLazyRoute,
-  authUsersRegisterLazyRoute: authUsersRegisterLazyRoute,
   authUsersUserIdEditLazyRoute: authUsersUserIdEditLazyRoute,
 }
 
@@ -1237,16 +995,12 @@ export interface FileRoutesByFullPath {
   '/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/perangkat/baru': typeof authPerangkatBaruLazyRoute
   '/users/baru': typeof authUsersBaruLazyRoute
-  '/users/register': typeof authUsersRegisterLazyRoute
-  '/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
-  '/pengaturan/kampus/$kampusId': typeof authPengaturanKampusKampusIdLazyRouteWithChildren
   '/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
   '/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
-  '/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
   '/perangkat/$perangkatId/arsip': typeof authPerangkatPerangkatIdArsipLazyRoute
   '/perangkat/$perangkatId/data': typeof authPerangkatPerangkatIdDataLazyRoute
@@ -1255,15 +1009,11 @@ export interface FileRoutesByFullPath {
   '/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
   '/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
-  '/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
-  '/pengaturan/kampus/$kampusId/hapus': typeof authPengaturanKampusKampusIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
-  '/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
   '/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
-  '/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/$registerId/edit': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/$registerId/hapus': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute
@@ -1286,16 +1036,12 @@ export interface FileRoutesByTo {
   '/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/perangkat/baru': typeof authPerangkatBaruLazyRoute
   '/users/baru': typeof authUsersBaruLazyRoute
-  '/users/register': typeof authUsersRegisterLazyRoute
-  '/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
-  '/pengaturan/kampus/$kampusId': typeof authPengaturanKampusKampusIdLazyRouteWithChildren
   '/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
   '/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
-  '/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
   '/perangkat/$perangkatId/arsip': typeof authPerangkatPerangkatIdArsipLazyRoute
   '/perangkat/$perangkatId/data': typeof authPerangkatPerangkatIdDataLazyRoute
@@ -1304,15 +1050,11 @@ export interface FileRoutesByTo {
   '/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
   '/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
-  '/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
-  '/pengaturan/kampus/$kampusId/hapus': typeof authPengaturanKampusKampusIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
-  '/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
   '/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
-  '/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/$registerId/edit': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute
   '/pengaturan/powermeter/$powermeterId/register/$registerId/hapus': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute
@@ -1336,16 +1078,12 @@ export interface FileRoutesById {
   '/__auth/pengaturan/unit': typeof authPengaturanUnitLazyRouteWithChildren
   '/__auth/perangkat/baru': typeof authPerangkatBaruLazyRoute
   '/__auth/users/baru': typeof authUsersBaruLazyRoute
-  '/__auth/users/register': typeof authUsersRegisterLazyRoute
-  '/__auth/pengaturan/gedung/$gedungId': typeof authPengaturanGedungGedungIdLazyRouteWithChildren
   '/__auth/pengaturan/gedung/baru': typeof authPengaturanGedungBaruLazyRoute
-  '/__auth/pengaturan/kampus/$kampusId': typeof authPengaturanKampusKampusIdLazyRouteWithChildren
   '/__auth/pengaturan/kampus/baru': typeof authPengaturanKampusBaruLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId': typeof authPengaturanPowermeterPowermeterIdLazyRouteWithChildren
   '/__auth/pengaturan/powermeter/baru': typeof authPengaturanPowermeterBaruLazyRoute
   '/__auth/pengaturan/role/baru': typeof authPengaturanRoleBaruLazyRoute
   '/__auth/pengaturan/tarif-listrik/edit': typeof authPengaturanTarifListrikEditLazyRoute
-  '/__auth/pengaturan/unit/$unitId': typeof authPengaturanUnitUnitIdLazyRouteWithChildren
   '/__auth/pengaturan/unit/baru': typeof authPengaturanUnitBaruLazyRoute
   '/__auth/perangkat/$perangkatId/arsip': typeof authPerangkatPerangkatIdArsipLazyRoute
   '/__auth/perangkat/$perangkatId/data': typeof authPerangkatPerangkatIdDataLazyRoute
@@ -1354,15 +1092,11 @@ export interface FileRoutesById {
   '/__auth/perangkat/$perangkatId/logs': typeof authPerangkatPerangkatIdLogsLazyRoute
   '/__auth/users/$userId/edit': typeof authUsersUserIdEditLazyRoute
   '/__auth/pengaturan/gedung/$gedungId/edit': typeof authPengaturanGedungGedungIdEditLazyRoute
-  '/__auth/pengaturan/gedung/$gedungId/hapus': typeof authPengaturanGedungGedungIdHapusLazyRoute
   '/__auth/pengaturan/kampus/$kampusId/edit': typeof authPengaturanKampusKampusIdEditLazyRoute
-  '/__auth/pengaturan/kampus/$kampusId/hapus': typeof authPengaturanKampusKampusIdHapusLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/edit': typeof authPengaturanPowermeterPowermeterIdEditLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/hapus': typeof authPengaturanPowermeterPowermeterIdHapusLazyRoute
-  '/__auth/pengaturan/powermeter/$powermeterId/register': typeof authPengaturanPowermeterPowermeterIdRegisterLazyRouteWithChildren
   '/__auth/pengaturan/role/$roleId/edit': typeof authPengaturanRoleRoleIdEditLazyRoute
   '/__auth/pengaturan/unit/$unitId/edit': typeof authPengaturanUnitUnitIdEditLazyRoute
-  '/__auth/pengaturan/unit/$unitId/hapus': typeof authPengaturanUnitUnitIdHapusLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/register/baru': typeof authPengaturanPowermeterPowermeterIdRegisterBaruLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdEditLazyRoute
   '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus': typeof authPengaturanPowermeterPowermeterIdRegisterRegisterIdHapusLazyRoute
@@ -1387,16 +1121,12 @@ export interface FileRouteTypes {
     | '/pengaturan/unit'
     | '/perangkat/baru'
     | '/users/baru'
-    | '/users/register'
-    | '/pengaturan/gedung/$gedungId'
     | '/pengaturan/gedung/baru'
-    | '/pengaturan/kampus/$kampusId'
     | '/pengaturan/kampus/baru'
     | '/pengaturan/powermeter/$powermeterId'
     | '/pengaturan/powermeter/baru'
     | '/pengaturan/role/baru'
     | '/pengaturan/tarif-listrik/edit'
-    | '/pengaturan/unit/$unitId'
     | '/pengaturan/unit/baru'
     | '/perangkat/$perangkatId/arsip'
     | '/perangkat/$perangkatId/data'
@@ -1405,15 +1135,11 @@ export interface FileRouteTypes {
     | '/perangkat/$perangkatId/logs'
     | '/users/$userId/edit'
     | '/pengaturan/gedung/$gedungId/edit'
-    | '/pengaturan/gedung/$gedungId/hapus'
     | '/pengaturan/kampus/$kampusId/edit'
-    | '/pengaturan/kampus/$kampusId/hapus'
     | '/pengaturan/powermeter/$powermeterId/edit'
     | '/pengaturan/powermeter/$powermeterId/hapus'
-    | '/pengaturan/powermeter/$powermeterId/register'
     | '/pengaturan/role/$roleId/edit'
     | '/pengaturan/unit/$unitId/edit'
-    | '/pengaturan/unit/$unitId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register/baru'
     | '/pengaturan/powermeter/$powermeterId/register/$registerId/edit'
     | '/pengaturan/powermeter/$powermeterId/register/$registerId/hapus'
@@ -1435,16 +1161,12 @@ export interface FileRouteTypes {
     | '/pengaturan/unit'
     | '/perangkat/baru'
     | '/users/baru'
-    | '/users/register'
-    | '/pengaturan/gedung/$gedungId'
     | '/pengaturan/gedung/baru'
-    | '/pengaturan/kampus/$kampusId'
     | '/pengaturan/kampus/baru'
     | '/pengaturan/powermeter/$powermeterId'
     | '/pengaturan/powermeter/baru'
     | '/pengaturan/role/baru'
     | '/pengaturan/tarif-listrik/edit'
-    | '/pengaturan/unit/$unitId'
     | '/pengaturan/unit/baru'
     | '/perangkat/$perangkatId/arsip'
     | '/perangkat/$perangkatId/data'
@@ -1453,15 +1175,11 @@ export interface FileRouteTypes {
     | '/perangkat/$perangkatId/logs'
     | '/users/$userId/edit'
     | '/pengaturan/gedung/$gedungId/edit'
-    | '/pengaturan/gedung/$gedungId/hapus'
     | '/pengaturan/kampus/$kampusId/edit'
-    | '/pengaturan/kampus/$kampusId/hapus'
     | '/pengaturan/powermeter/$powermeterId/edit'
     | '/pengaturan/powermeter/$powermeterId/hapus'
-    | '/pengaturan/powermeter/$powermeterId/register'
     | '/pengaturan/role/$roleId/edit'
     | '/pengaturan/unit/$unitId/edit'
-    | '/pengaturan/unit/$unitId/hapus'
     | '/pengaturan/powermeter/$powermeterId/register/baru'
     | '/pengaturan/powermeter/$powermeterId/register/$registerId/edit'
     | '/pengaturan/powermeter/$powermeterId/register/$registerId/hapus'
@@ -1483,16 +1201,12 @@ export interface FileRouteTypes {
     | '/__auth/pengaturan/unit'
     | '/__auth/perangkat/baru'
     | '/__auth/users/baru'
-    | '/__auth/users/register'
-    | '/__auth/pengaturan/gedung/$gedungId'
     | '/__auth/pengaturan/gedung/baru'
-    | '/__auth/pengaturan/kampus/$kampusId'
     | '/__auth/pengaturan/kampus/baru'
     | '/__auth/pengaturan/powermeter/$powermeterId'
     | '/__auth/pengaturan/powermeter/baru'
     | '/__auth/pengaturan/role/baru'
     | '/__auth/pengaturan/tarif-listrik/edit'
-    | '/__auth/pengaturan/unit/$unitId'
     | '/__auth/pengaturan/unit/baru'
     | '/__auth/perangkat/$perangkatId/arsip'
     | '/__auth/perangkat/$perangkatId/data'
@@ -1501,15 +1215,11 @@ export interface FileRouteTypes {
     | '/__auth/perangkat/$perangkatId/logs'
     | '/__auth/users/$userId/edit'
     | '/__auth/pengaturan/gedung/$gedungId/edit'
-    | '/__auth/pengaturan/gedung/$gedungId/hapus'
     | '/__auth/pengaturan/kampus/$kampusId/edit'
-    | '/__auth/pengaturan/kampus/$kampusId/hapus'
     | '/__auth/pengaturan/powermeter/$powermeterId/edit'
     | '/__auth/pengaturan/powermeter/$powermeterId/hapus'
-    | '/__auth/pengaturan/powermeter/$powermeterId/register'
     | '/__auth/pengaturan/role/$roleId/edit'
     | '/__auth/pengaturan/unit/$unitId/edit'
-    | '/__auth/pengaturan/unit/$unitId/hapus'
     | '/__auth/pengaturan/powermeter/$powermeterId/register/baru'
     | '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit'
     | '/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus'
@@ -1589,7 +1299,6 @@ export const routeTree = rootRoute
       "parent": "/__auth",
       "children": [
         "/__auth/users/baru",
-        "/__auth/users/register",
         "/__auth/users/$userId/edit"
       ]
     },
@@ -1608,16 +1317,16 @@ export const routeTree = rootRoute
       "filePath": "__auth/pengaturan/gedung.lazy.tsx",
       "parent": "/__auth/pengaturan",
       "children": [
-        "/__auth/pengaturan/gedung/$gedungId",
-        "/__auth/pengaturan/gedung/baru"
+        "/__auth/pengaturan/gedung/baru",
+        "/__auth/pengaturan/gedung/$gedungId/edit"
       ]
     },
     "/__auth/pengaturan/kampus": {
       "filePath": "__auth/pengaturan/kampus.lazy.tsx",
       "parent": "/__auth/pengaturan",
       "children": [
-        "/__auth/pengaturan/kampus/$kampusId",
-        "/__auth/pengaturan/kampus/baru"
+        "/__auth/pengaturan/kampus/baru",
+        "/__auth/pengaturan/kampus/$kampusId/edit"
       ]
     },
     "/__auth/pengaturan/powermeter": {
@@ -1647,8 +1356,8 @@ export const routeTree = rootRoute
       "filePath": "__auth/pengaturan/unit.lazy.tsx",
       "parent": "/__auth/pengaturan",
       "children": [
-        "/__auth/pengaturan/unit/$unitId",
-        "/__auth/pengaturan/unit/baru"
+        "/__auth/pengaturan/unit/baru",
+        "/__auth/pengaturan/unit/$unitId/edit"
       ]
     },
     "/__auth/perangkat/baru": {
@@ -1659,29 +1368,9 @@ export const routeTree = rootRoute
       "filePath": "__auth/users/baru.lazy.tsx",
       "parent": "/__auth/users"
     },
-    "/__auth/users/register": {
-      "filePath": "__auth/users/register.lazy.tsx",
-      "parent": "/__auth/users"
-    },
-    "/__auth/pengaturan/gedung/$gedungId": {
-      "filePath": "__auth/pengaturan/gedung/$gedungId.lazy.tsx",
-      "parent": "/__auth/pengaturan/gedung",
-      "children": [
-        "/__auth/pengaturan/gedung/$gedungId/edit",
-        "/__auth/pengaturan/gedung/$gedungId/hapus"
-      ]
-    },
     "/__auth/pengaturan/gedung/baru": {
       "filePath": "__auth/pengaturan/gedung/baru.lazy.tsx",
       "parent": "/__auth/pengaturan/gedung"
-    },
-    "/__auth/pengaturan/kampus/$kampusId": {
-      "filePath": "__auth/pengaturan/kampus/$kampusId.lazy.tsx",
-      "parent": "/__auth/pengaturan/kampus",
-      "children": [
-        "/__auth/pengaturan/kampus/$kampusId/edit",
-        "/__auth/pengaturan/kampus/$kampusId/hapus"
-      ]
     },
     "/__auth/pengaturan/kampus/baru": {
       "filePath": "__auth/pengaturan/kampus.baru.lazy.tsx",
@@ -1693,7 +1382,9 @@ export const routeTree = rootRoute
       "children": [
         "/__auth/pengaturan/powermeter/$powermeterId/edit",
         "/__auth/pengaturan/powermeter/$powermeterId/hapus",
-        "/__auth/pengaturan/powermeter/$powermeterId/register"
+        "/__auth/pengaturan/powermeter/$powermeterId/register/baru",
+        "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit",
+        "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus"
       ]
     },
     "/__auth/pengaturan/powermeter/baru": {
@@ -1707,14 +1398,6 @@ export const routeTree = rootRoute
     "/__auth/pengaturan/tarif-listrik/edit": {
       "filePath": "__auth/pengaturan/tarif-listrik/edit.lazy.tsx",
       "parent": "/__auth/pengaturan/tarif-listrik"
-    },
-    "/__auth/pengaturan/unit/$unitId": {
-      "filePath": "__auth/pengaturan/unit/$unitId.lazy.tsx",
-      "parent": "/__auth/pengaturan/unit",
-      "children": [
-        "/__auth/pengaturan/unit/$unitId/edit",
-        "/__auth/pengaturan/unit/$unitId/hapus"
-      ]
     },
     "/__auth/pengaturan/unit/baru": {
       "filePath": "__auth/pengaturan/unit/baru.lazy.tsx",
@@ -1746,19 +1429,11 @@ export const routeTree = rootRoute
     },
     "/__auth/pengaturan/gedung/$gedungId/edit": {
       "filePath": "__auth/pengaturan/gedung/$gedungId.edit.lazy.tsx",
-      "parent": "/__auth/pengaturan/gedung/$gedungId"
-    },
-    "/__auth/pengaturan/gedung/$gedungId/hapus": {
-      "filePath": "__auth/pengaturan/gedung/$gedungId.hapus.lazy.tsx",
-      "parent": "/__auth/pengaturan/gedung/$gedungId"
+      "parent": "/__auth/pengaturan/gedung"
     },
     "/__auth/pengaturan/kampus/$kampusId/edit": {
       "filePath": "__auth/pengaturan/kampus/$kampusId.edit.lazy.tsx",
-      "parent": "/__auth/pengaturan/kampus/$kampusId"
-    },
-    "/__auth/pengaturan/kampus/$kampusId/hapus": {
-      "filePath": "__auth/pengaturan/kampus/$kampusId.hapus.lazy.tsx",
-      "parent": "/__auth/pengaturan/kampus/$kampusId"
+      "parent": "/__auth/pengaturan/kampus"
     },
     "/__auth/pengaturan/powermeter/$powermeterId/edit": {
       "filePath": "__auth/pengaturan/powermeter/$powermeterId.edit.lazy.tsx",
@@ -1768,38 +1443,25 @@ export const routeTree = rootRoute
       "filePath": "__auth/pengaturan/powermeter/$powermeterId.hapus.lazy.tsx",
       "parent": "/__auth/pengaturan/powermeter/$powermeterId"
     },
-    "/__auth/pengaturan/powermeter/$powermeterId/register": {
-      "filePath": "__auth/pengaturan/powermeter/$powermeterId.register.lazy.tsx",
-      "parent": "/__auth/pengaturan/powermeter/$powermeterId",
-      "children": [
-        "/__auth/pengaturan/powermeter/$powermeterId/register/baru",
-        "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit",
-        "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus"
-      ]
-    },
     "/__auth/pengaturan/role/$roleId/edit": {
       "filePath": "__auth/pengaturan/role/$roleId.edit.lazy.tsx",
       "parent": "/__auth/pengaturan/role"
     },
     "/__auth/pengaturan/unit/$unitId/edit": {
       "filePath": "__auth/pengaturan/unit/$unitId.edit.lazy.tsx",
-      "parent": "/__auth/pengaturan/unit/$unitId"
-    },
-    "/__auth/pengaturan/unit/$unitId/hapus": {
-      "filePath": "__auth/pengaturan/unit/$unitId.hapus.lazy.tsx",
-      "parent": "/__auth/pengaturan/unit/$unitId"
+      "parent": "/__auth/pengaturan/unit"
     },
     "/__auth/pengaturan/powermeter/$powermeterId/register/baru": {
       "filePath": "__auth/pengaturan/powermeter/$powermeterId.register.baru.lazy.tsx",
-      "parent": "/__auth/pengaturan/powermeter/$powermeterId/register"
+      "parent": "/__auth/pengaturan/powermeter/$powermeterId"
     },
     "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/edit": {
       "filePath": "__auth/pengaturan/powermeter/$powermeterId.register.$registerId.edit.lazy.tsx",
-      "parent": "/__auth/pengaturan/powermeter/$powermeterId/register"
+      "parent": "/__auth/pengaturan/powermeter/$powermeterId"
     },
     "/__auth/pengaturan/powermeter/$powermeterId/register/$registerId/hapus": {
       "filePath": "__auth/pengaturan/powermeter/$powermeterId.register.$registerId.hapus.lazy.tsx",
-      "parent": "/__auth/pengaturan/powermeter/$powermeterId/register"
+      "parent": "/__auth/pengaturan/powermeter/$powermeterId"
     }
   }
 }

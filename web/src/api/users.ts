@@ -8,9 +8,49 @@ export interface Login {
 }
 
 export interface UserProfile {
-    username: string;
-    email: string;
-    token: string;
+  id: number;
+  full_name: string;
+  username: string;
+  email: string;
+  role: number;
+  role_name: string;
+  permissions: string[];
+}
+
+export interface User {
+  id: number;
+  full_name: string;
+  username: string;
+  email: string;
+  role: number;
+  role_name: string;
+}
+
+export interface UserCreate {
+  full_name: string;
+  username: string;
+  email: string;
+  password: string;
+  role: number;
+}
+
+export interface UserUpdate {
+  full_name?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+  role?: number;
+}
+
+export interface Role {
+  id: number;
+  name: string;
+}
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+function authHeader(token: string | null) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export async function doLogin({ username, password }: Login) {
@@ -25,7 +65,7 @@ export async function doLogin({ username, password }: Login) {
     },
     data: data,
   };
-  const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/token`, config);
+  const res = await axios(`${backendUrl}/token`, config);
 
   return res;
 }
@@ -35,7 +75,7 @@ export async function getProfile(
 ): Promise<Api<UserProfile>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/users/me`,
+    url: `${backendUrl}/users/me`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -43,4 +83,78 @@ export async function getProfile(
 
   const { data } = await axios(config);
   return data as Api<UserProfile>;
+}
+
+export async function getUsers(
+  context: QueryFunctionContext,
+): Promise<Api<User[]>> {
+  const token = context.queryKey[1] as string;
+  const { data } = await axios.get(`${backendUrl}/users/`, {
+    headers: authHeader(token),
+  });
+  return data as Api<User[]>;
+}
+
+export async function getRoles(
+  context: QueryFunctionContext,
+): Promise<Api<Role[]>> {
+  const token = context.queryKey[1] as string;
+  const { data } = await axios.get(`${backendUrl}/users/roles`, {
+    headers: authHeader(token),
+  });
+  return data as Api<Role[]>;
+}
+
+export async function getUser({
+  token,
+  userId,
+}: {
+  token: string | null;
+  userId: string;
+}): Promise<Api<User>> {
+  const { data } = await axios.get(`${backendUrl}/users/${userId}`, {
+    headers: authHeader(token),
+  });
+  return data as Api<User>;
+}
+
+export async function createUser({
+  token,
+  payload,
+}: {
+  token: string | null;
+  payload: UserCreate;
+}): Promise<Api<User>> {
+  const { data } = await axios.post(`${backendUrl}/users/`, payload, {
+    headers: authHeader(token),
+  });
+  return data as Api<User>;
+}
+
+export async function updateUser({
+  token,
+  userId,
+  payload,
+}: {
+  token: string | null;
+  userId: string;
+  payload: UserUpdate;
+}): Promise<Api<User>> {
+  const { data } = await axios.put(`${backendUrl}/users/${userId}`, payload, {
+    headers: authHeader(token),
+  });
+  return data as Api<User>;
+}
+
+export async function deleteUser({
+  token,
+  userId,
+}: {
+  token: string | null;
+  userId: string;
+}): Promise<Api<{ id: number }>> {
+  const { data } = await axios.delete(`${backendUrl}/users/${userId}`, {
+    headers: authHeader(token),
+  });
+  return data as Api<{ id: number }>;
 }

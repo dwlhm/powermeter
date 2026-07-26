@@ -1,8 +1,8 @@
-import psycopg2
+import psycopg
 
 def get(sql, config, param = None):
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, param) 
                 
@@ -15,7 +15,7 @@ def get(sql, config, param = None):
                     "data": d
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error, type(Error))
         return {
             "error": str(Error)
@@ -23,7 +23,7 @@ def get(sql, config, param = None):
         
 def upsert(sql, param, config):
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, param) 
                 
@@ -38,7 +38,7 @@ def upsert(sql, param, config):
                     "data": d
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error, type(Error))
         return {
             "error": str(Error)
@@ -46,7 +46,7 @@ def upsert(sql, param, config):
         
 def delete(sql, param, config):
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, param) 
 
@@ -56,7 +56,7 @@ def delete(sql, param, config):
                     "data": True
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error, type(Error))
         return {
             "error": str(Error)

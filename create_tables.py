@@ -1,13 +1,15 @@
-import psycopg2
+import psycopg
 from configuration.config import load_config
 from database.connect import connect
 from database.insert import insert_new_role
 from database.get import get_role_by_id
 from user.db import get_user_by_username, insert_new_user
 from user.auth.internal import get_password_hash
-from user.internal import User
+from user.schemas import User
 from configuration import config
 from tagihan_listrik.db import get_tarif, create_tarif
+from role.db import seed_default_permissions, assign_all_permissions_to_admin, role_name_exists, create_role
+from role.schemas import RoleCreate
 
 def create_tables():
     """ Create tables in the PostgreSQL database """
@@ -57,57 +59,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -116,6 +68,28 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS role (
             id SERIAL PRIMARY KEY,
             name VARCHAR(10)
+        )
+        """,
+        """
+        ALTER TABLE role ADD COLUMN IF NOT EXISTS description VARCHAR(255) DEFAULT ''
+        """,
+        """
+        ALTER TABLE role ADD COLUMN IF NOT EXISTS is_system BOOLEAN DEFAULT FALSE
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS permissions (
+            id SERIAL PRIMARY KEY,
+            code VARCHAR(100) NOT NULL UNIQUE,
+            name VARCHAR(100) NOT NULL,
+            "group" VARCHAR(50) NOT NULL,
+            description VARCHAR(255) DEFAULT ''
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS role_permissions (
+            role_id INT NOT NULL REFERENCES role(id) ON DELETE CASCADE,
+            permission_id INT NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+            PRIMARY KEY (role_id, permission_id)
         )
         """,
         """
@@ -160,57 +134,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data_hourly (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device_hourly FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -219,57 +143,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data_daily (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device_daily FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -278,57 +152,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data_weekly (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device_daily FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -337,57 +161,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data_monthly (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device_monthly FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -396,57 +170,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS data_yearly (
             id SERIAL PRIMARY KEY,
             device_id INT NOT NULL,
-            phase_voltage_a FLOAT8,
-            phase_voltage_b FLOAT8,
-            phase_voltage_c FLOAT8,
-            wire_voltage_ab FLOAT8,
-            wire_voltage_bc FLOAT8,
-            wire_voltage_ca FLOAT8,
-            phase_current_a FLOAT8,
-            phase_current_b FLOAT8,
-            phase_current_c FLOAT8,
-            active_power_a FLOAT8,
-            active_power_b FLOAT8,
-            active_power_c FLOAT8,
-            reactive_power_a FLOAT8,
-            reactive_power_b FLOAT8,
-            reactive_power_c FLOAT8,
-            apparent_power_a FLOAT8,
-            apparent_power_b FLOAT8,
-            apparent_power_c FLOAT8,
-            power_factor_a FLOAT8,
-            power_factor_b FLOAT8,
-            power_factor_c FLOAT8,
-            frequency FLOAT8,
-            active_power FLOAT8,
-            reactive_power FLOAT8,
-            positive_active_power FLOAT8,
-            negative_active_power FLOAT8,
-            positive_reactive_power FLOAT8,
-            negative_reactive_power FLOAT8,
-            current_active_power_demand FLOAT8,
-            maximum_active_power_demand FLOAT8,
-            current_reactive_power_demand FLOAT8,
-            maximum_reactive_power_demand FLOAT8,
-            a_phase_voltage_total_harmonic_content FLOAT8,
-            b_phase_voltage_total_harmonic_content FLOAT8,
-            c_phase_voltage_total_harmonic_content FLOAT8,
-            a_phase_current_total_harmonic_content FLOAT8,
-            b_phase_current_total_harmonic_content FLOAT8,
-            c_phase_current_total_harmonic_content FLOAT8,
-            o_phase_current FLOAT8,
-            phase_voltage_maximum FLOAT8,
-            Wires_voltage_maximum FLOAT8,
-            current_maximum FLOAT8,
-            voltage_imbalance FLOAT8,
-            current_imbalance FLOAT8,
-            a_b_phase_voltage_angle FLOAT8,
-            b_C_phase_voltage_angle FLOAT8,
-            c_a_phase_voltage_angle FLOAT8,
-            first_quadrant_reactive_energy FLOAT8,
-            second_quadrant_reactive_energy FLOAT8,
-            third_quadrant_reactive_energy FLOAT8,
-            fourth_quadrant_reactive_power FLOAT8,
+            metrics JSONB DEFAULT '{}'::jsonb,
             timestamp TIMESTAMPTZ NOT NULL,
             CONSTRAINT fk_device_yearly FOREIGN KEY(device_id) REFERENCES device(id)
         )
@@ -489,11 +213,11 @@ def create_tables():
     )
     config_db = config.load_config()
     try:
-        with psycopg2.connect(**config_db) as conn:
+        with psycopg.connect(**config_db) as conn:
             with conn.cursor() as cur:
                 for command in commands:
                     cur.execute(command)
-    except (psycopg2.DatabaseError, Exception) as error:
+    except (psycopg.DatabaseError, Exception) as error:
         print(error)
 
     config_app = config.load_config("configuration/database.ini", "application")
@@ -522,6 +246,61 @@ def create_tables():
     if tarifExsist.get("data") == []:
         new_tarif = create_tarif(harga=2000, config=load_config())
         if new_tarif.get("data"): print("tarif dibuat")
+
+    seed_default_permissions(config_db)
+    assign_all_permissions_to_admin(config_db)
+    seed_default_roles(config_db)
+
+def _lookup_permission_ids(config, codes: list[str]) -> list[int]:
+    sql = "SELECT id FROM permissions WHERE code = ANY(%s)"
+    try:
+        with psycopg.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (codes,))
+                return [row[0] for row in cur.fetchall()]
+    except (Exception, psycopg.DatabaseError) as Error:
+        print("Lookup permission error:", Error)
+        return []
+
+
+def seed_default_roles(config):
+    roles = [
+        {
+            "name": "Viewer",
+            "description": "Hanya bisa melihat data",
+            "permission_codes": [
+                "kampus.view", "unit.view", "gedung.view",
+                "device.view", "data.view",
+                "powermeter.view", "tarif.view",
+            ],
+        },
+        {
+            "name": "Operator",
+            "description": "Mengelola perangkat dan melihat data",
+            "permission_codes": [
+                "kampus.view", "unit.view", "gedung.view",
+                "device.view", "device.create",
+                "data.view", "data.export",
+                "powermeter.view", "tarif.view",
+            ],
+        },
+    ]
+
+    for role_def in roles:
+        if role_name_exists(role_def["name"], config):
+            continue
+        perm_ids = _lookup_permission_ids(config, role_def["permission_codes"])
+        payload = RoleCreate(
+            name=role_def["name"],
+            description=role_def["description"],
+            permission_ids=perm_ids,
+        )
+        try:
+            created = create_role(payload, config)
+            print(f"Role '{role_def['name']}' created with {len(perm_ids)} permissions")
+        except Exception as e:
+            print(f"Failed to create role '{role_def['name']}': {e}")
+
 
 if __name__ == '__main__':
     create_tables()

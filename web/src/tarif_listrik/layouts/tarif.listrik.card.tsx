@@ -22,7 +22,7 @@ export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik
 
   if (tarifListrik.isSuccess)
     return (
-      <div className="rounded py-4 px-5 bg-gray-100 text-gray-900">
+      <div className="rounded-xl py-4 px-5 bg-card text-card-foreground border border-border">
         <PerangkatSubTitle>Tarif Listrik</PerangkatSubTitle>
         <div className="flex gap-2 py-5">
           <p>Rp</p>
@@ -31,7 +31,7 @@ export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik
             <span className="text-base font-normal"> / kWh</span>
           </p>
         </div>
-        <p className="text-xs italic text-gray-900/50">
+        <p className="text-xs italic text-muted-foreground">
           Terakhir diperbaharui pada:{" "}
           {!tarifListrik.data.results.updated_at
             ? new Date(
@@ -42,7 +42,7 @@ export const TarifListrikCard = (props: { tarif: UseQueryResult<Api<TarifListrik
         <div className="flex justify-end mt-5">
           <Link
             to="/pengaturan/tarif-listrik/edit"
-            className="text-xs backdrop-blur bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-2 px-4 rounded flex items-center gap-2"
+            className="text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium py-2 px-4 rounded flex items-center gap-2 transition-colors"
           >
             <AdjustmentsHorizontalIcon className="size-4" /> Sesuaikan Tarif
           </Link>

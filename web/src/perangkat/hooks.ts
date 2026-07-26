@@ -10,6 +10,7 @@ import {
   getPerangkatData,
   getPerangkatDataArsip,
 } from "./api";
+import { DeviceLog, DeviceLogType, getDeviceLogs } from "@/api/devices";
 import { Dayjs } from "dayjs";
 
 export const useQueryDetailPerangkat = (
@@ -38,6 +39,8 @@ export type UseQueryPerangkatDataProps = {
   from?: string;
   to?: string;
   limit?: number;
+  refetchInterval?: number | false;
+  enabled?: boolean;
 };
 
 export const useQueryPerangkatData = (
@@ -53,7 +56,8 @@ export const useQueryPerangkatData = (
     ],
     queryFn: getPerangkatData,
     retry: false,
-    refetchInterval: 2500, // ms
+    refetchInterval: q.refetchInterval ?? 2500, // ms
+    enabled: q.enabled !== false && !!q.token && !!q.perangkatId,
     onSuccess: q.onSuccess,
   });
 
@@ -68,12 +72,13 @@ export type UseQueryPerangkatArsipDataProps = {
 export const useQueryPerangkatArsipData = (
   q: UseQueryPerangkatArsipDataProps,
 ): UseQueryResult<Api<PerangkatData>, AxiosError> =>
-  useQuery<Api<any>, AxiosError>({
+  useQuery<Api<PerangkatData>, AxiosError>({
     queryKey: [`arsip.${q.perangkatId}`, q.token, q.perangkatId, q.interval, q.from?.toISOString(), q.to?.toISOString()],
     queryFn: getPerangkatDataArsip,
     retry: false,
     refetchInterval: false,
     refetchOnMount: false,
+    enabled: !!q.token && !!q.from && !!q.to,
   });
 
   export type UseQueryEnergyConsumptionProps = {
@@ -90,3 +95,32 @@ export const useQueryPerangkatArsipData = (
     retry: false,
     refetchInterval: 120000,
   })
+
+export type UseQueryDeviceLogsProps = {
+  token: string | null;
+  perangkatId: string;
+  type?: DeviceLogType | null;
+  from?: Dayjs | null;
+  to?: Dayjs | null;
+  limit?: number;
+  enabled?: boolean;
+};
+
+export const useQueryDeviceLogs = (
+  q: UseQueryDeviceLogsProps,
+): UseQueryResult<Api<DeviceLog[]>, AxiosError> =>
+  useQuery<Api<DeviceLog[]>, AxiosError>({
+    queryKey: [
+      `device.logs.${q.perangkatId}`,
+      q.token,
+      q.perangkatId,
+      q.type,
+      q.from?.toISOString(),
+      q.to?.toISOString(),
+      q.limit,
+    ],
+    queryFn: getDeviceLogs,
+    retry: false,
+    refetchInterval: 10000,
+    enabled: q.enabled !== false && !!q.token && !!q.perangkatId,
+  });

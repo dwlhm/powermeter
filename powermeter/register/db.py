@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 import base64
 
 def get(config):
@@ -7,7 +7,7 @@ def get(config):
              LEFT JOIN power_meter ON power_meter_register.power_meter = power_meter.id"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
 
@@ -35,7 +35,7 @@ def get(config):
                     "data": res
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -48,7 +48,7 @@ def get_by_id(id: str, config):
              WHERE power_meter.id = %s"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
 
@@ -72,7 +72,7 @@ def get_by_id(id: str, config):
                     }
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -88,7 +88,7 @@ def new(powermeter_id: str, register: str, config):
              RETURNING id"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(powermeter_id).decode(), register, ))
 
@@ -103,7 +103,7 @@ def new(powermeter_id: str, register: str, config):
                 }
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -114,14 +114,14 @@ def update(id: str, powermeter_id: str, register:str, config):
                  register = %s
              WHERE id= %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 res = cur.execute(sql, (base64.b64decode(powermeter_id).decode(), register, base64.b64decode(id).decode(), ))
                 conn.commit()
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -130,13 +130,13 @@ def remove(id: str, config):
     sql = """DELETE FROM power_meter_register
              WHERE id = %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }

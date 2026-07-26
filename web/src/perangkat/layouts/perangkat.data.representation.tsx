@@ -5,20 +5,50 @@ import { Api } from "@/api/internal";
 import { CompLoading, LayoutError } from "@/common";
 import { LayoutPerangkatCard } from "./perangkat.card";
 import { CompPerangkatLineChart } from "../components";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-export interface RepositoryInf {
-  [key: string]: number[];
-}
-
-let GLOBAL_DATA: PerangkatData = {
+const EMPTY_DATA: PerangkatData = {
   data: {},
   timestamp: [],
   length: 0,
 };
 
-let current_perangkat = "";
-let firstTime = false;
+function mergeNewData(prev: PerangkatData, next: PerangkatData): PerangkatData {
+  if (prev.length === 0 || next.length === 0) {
+    return next.length > 0 ? next : prev;
+  }
+
+  const lastTimestamp = prev.timestamp[prev.length - 1];
+  const startIndex = next.timestamp.findIndex(
+    (t) => new Date(t) > new Date(lastTimestamp),
+  );
+
+  if (startIndex === -1) {
+    return prev;
+  }
+
+  const newData: PerangkatData["data"] = {};
+  Object.keys(next.data).forEach((key) => {
+    newData[key] = next.data[key].slice(startIndex);
+  });
+
+  const merged: PerangkatData["data"] = {};
+  Object.keys(prev.data).forEach((key) => {
+    merged[key] = [...prev.data[key], ...(newData[key] ?? [])];
+  });
+
+  Object.keys(newData).forEach((key) => {
+    if (!(key in merged)) {
+      merged[key] = newData[key];
+    }
+  });
+
+  return {
+    data: merged,
+    timestamp: [...prev.timestamp, ...next.timestamp.slice(startIndex)],
+    length: prev.length + next.timestamp.length - startIndex,
+  };
+}
 
 export type PerangkatDataRepresentationMode = "grafik" | "table";
 
@@ -34,59 +64,50 @@ export type PerangkatDataRepresentationProps = {
 export const PerangkatDataRepresentation = (
   props: PerangkatDataRepresentationProps,
 ) => {
+  const {
+    token,
+    perangkatId,
+    register,
+    interval,
+    isFilterChanged,
+    onFilterChanged,
+  } = props;
+
+  const [data, setData] = React.useState<PerangkatData>(EMPTY_DATA);
+  const [hasInitialData, setHasInitialData] = React.useState(false);
+
   useEffect(() => {
-    if (current_perangkat != props.perangkatId) {
-      firstTime = true;
-      current_perangkat = props.perangkatId;
+    setData(EMPTY_DATA);
+    setHasInitialData(false);
+    if (isFilterChanged) {
+      onFilterChanged(false);
     }
-    if (props.isFilterChanged == true) {
-      props.onFilterChanged(false);
-      GLOBAL_DATA = {
-        data: {},
-        timestamp: [],
-        length: 0,
-      };
-      firstTime = true;
-    }
-  }, [props.isFilterChanged]);
+  }, [perangkatId, interval, isFilterChanged, onFilterChanged]);
 
   const q = useQueryPerangkatData({
-    token: props.token,
-    perangkatId: props.perangkatId,
-    limit: firstTime ? 10 : 1,
-    interval: props.interval,
+    token,
+    perangkatId,
+    limit: hasInitialData ? 1 : 10,
+    interval,
+    refetchInterval: hasInitialData ? 2500 : false,
+    enabled: !!token && !!perangkatId,
     onSuccess: (res: Api<PerangkatData>) => {
-      if (firstTime) {
-        GLOBAL_DATA = res.results;
-        firstTime = false;
-        return;
-      }
-      const currData = res.results;
-      if (
-        currData.timestamp[currData.length - 1] !=
-        GLOBAL_DATA.timestamp[GLOBAL_DATA.length - 1]
-      ) {
-        Object.keys(currData.data).forEach((key) => {
-          GLOBAL_DATA.data[key] = [
-            ...GLOBAL_DATA.data[key],
-            ...currData.data[key],
-          ];
-        });
-        GLOBAL_DATA.timestamp = [
-          ...GLOBAL_DATA.timestamp,
-          ...currData.timestamp,
-        ];
-        GLOBAL_DATA.length += currData.length;
+      const results = res.results;
+      if (!hasInitialData) {
+        setData(results);
+        setHasInitialData(true);
+      } else {
+        setData((prev) => mergeNewData(prev, results));
       }
     },
   });
 
-  if (Object.keys(GLOBAL_DATA.data).length <= 0) return <CompLoading />;
-
   if (q.isError)
     return <LayoutError process="get data perangkat" message={q.error} />;
 
-  if (q.isSuccess && GLOBAL_DATA.length <= 0)
+  if (!hasInitialData || data.length <= 0) return <CompLoading />;
+
+  if (q.isSuccess && data.length <= 0)
     return (
       <LayoutError
         process="Pengambilan data perangkat"
@@ -94,22 +115,21 @@ export const PerangkatDataRepresentation = (
       />
     );
 
-  if (q.isSuccess)
-    return (
-      <div className="grid sm:grid-cols-3 gap-2">
-        {props.register.map((item,index) => (
-          <LayoutPerangkatCard key={`i.c.${item[4]}.${index}`}>
-            <h4 className="text-base font-medium">{`${item[3]} ${item[2] !== " " ? `(${item[2]})` : ""}`}</h4>
-            <div className="my-1 h-px bg-white/50 mb-2" />
+  return (
+    <div className="grid sm:grid-cols-3 gap-2">
+      {register.map((item, index) => (
+        <LayoutPerangkatCard key={`i.c.${item[4]}.${index}`}>
+          <h4 className="text-base font-medium">{`${item[3]} ${item[2] !== " " ? `(${item[2]})` : ""}`}</h4>
+          <div className="my-1 h-px bg-white/50 mb-2" />
 
-            <CompPerangkatLineChart
-              value={GLOBAL_DATA.data[item[4]]}
-              timestamp={GLOBAL_DATA.timestamp.map((d) =>
-                new Date(d).toLocaleTimeString(),
-              )}
-            />
-          </LayoutPerangkatCard>
-        ))}
-      </div>
-    );
+          <CompPerangkatLineChart
+            value={data.data[item[4]] ?? []}
+            timestamp={data.timestamp.map((d) =>
+              new Date(d).toLocaleTimeString(),
+            )}
+          />
+        </LayoutPerangkatCard>
+      ))}
+    </div>
+  );
 };

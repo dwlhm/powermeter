@@ -1,12 +1,11 @@
 import { useAuth } from "@/auth";
-import { CompLoading, LayoutError } from "@/common";
+import { CompLoading, LayoutError, CompModal } from "@/common";
 import { TarifListrik } from "@/tarif_listrik/api";
 import {
   useMutationTarifListrik,
   useQueryTarifListrik,
 } from "@/tarif_listrik/hooks";
 import { Button } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { createLazyFileRoute, useRouter } from "@tanstack/react-router";
 import React from "react";
 
@@ -54,60 +53,43 @@ function EditTarifListrik() {
     );
   if (tarif.isSuccess)
     return (
-      <div className="fixed inset-0 flex justify-center items-center z-20">
-        <div className="bg-white rounded shadow-md w-full max-w-2xl p-3">
-          <Button onClick={goBack} className="inline-block float-right">
-            <div className="bg-red-900 p-1 rounded w-full transition border border-2 border-red-900 transition hover:border-red-600">
-              <XMarkIcon className="block h-6 w-6 text-white" />
+      <CompModal
+        title="Sesuaikan Tarif Listrik"
+        closeTo="/pengaturan/tarif-listrik"
+      >
+        <form className="mb-4 max-w-lg mx-auto" onSubmit={onFormSubmit}>
+          <fieldset className="w-full grid gap-4">
+            <div className="grid gap-2 items-center min-w-[300px]">
+              <label htmlFor="harga-input" className="text-sm font-medium">
+                Harga per-Kwh (rupiah)
+              </label>
+              <input
+                id="harga-input"
+                name="harga"
+                placeholder="Masukan Harga Baru"
+                type="number"
+                defaultValue={tarif.data.results.harga}
+                className="bg-transparent dark:bg-slate-800 border border-gray-300 dark:border-slate-700 dark:text-slate-100 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+                required
+              />
             </div>
-          </Button>
-          <form className="mt-5 mb-10 max-w-lg mx-auto" onSubmit={onFormSubmit}>
-            <h2 className="mb-10 text-2xl font-semibold text-center">
-              Sesuaikan Tarif Listrik
-            </h2>
-            <fieldset className="w-full grid gap-2">
-              <div className="grid gap-2 items-center min-w-[300px]">
-                <label htmlFor="harga-input" className="text-sm font-medium">
-                  Harga per-Kwh (rupiah)
-                </label>
-                <input
-                  id="harga-input"
-                  name="harga"
-                  placeholder="Masukan Harga Baru"
-                  type="number"
-                  defaultValue={tarif.data.results.harga}
-                  className="border border-gray-300 rounded-md p-2 w-full"
-                  required
-                />
-              </div>
-              <div className="flex gap-4 mt-5">
-                <button
-                  type="submit"
-                  className="mt-2 bg-blue-900 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500 border border-2 border-blue-900 transition hover:border-blue-500"
-                >
-                  {isSubmitting ? "Loading..." : "Simpan"}
-                </button>
-                <Button
-                  onClick={goBack}
-                  className="mt-2 bg-red-900 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500 text-center border border-2 border-red-900 transition hover:border-red-600"
-                >
-                  Batalkan
-                </Button>
-              </div>
-            </fieldset>
-            <div>
-              {/* {mutation.isError ? (
-                <Errors
-                  className="mt-3"
-                  process="update data perangkat"
-                  message={mutation.error as AxiosError}
-                />
-              ) : (
-                <></>
-              )} */}
+            <div className="flex gap-4 mt-5">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-blue-900 dark:bg-blue-600 text-white py-2 px-4 rounded-md w-full disabled:bg-slate-300 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-500 border border-blue-900 dark:border-blue-600 transition-colors hover:bg-blue-800 dark:hover:bg-blue-700"
+              >
+                {isSubmitting ? "Menyimpan..." : "Simpan"}
+              </button>
+              <Button
+                onClick={goBack}
+                className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2 px-4 rounded-md w-full text-center border border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
+              >
+                Batalkan
+              </Button>
             </div>
-          </form>
-        </div>
-      </div>
+          </fieldset>
+        </form>
+      </CompModal>
     );
 }

@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 import base64
 
 def get_all(config):
@@ -7,7 +7,7 @@ def get_all(config):
              LEFT JOIN kampus ON unit.kampus = kampus.id"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
 
@@ -37,7 +37,7 @@ def get_all(config):
                     "data": res
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -50,7 +50,7 @@ def get_by_id(id: str, config):
              WHERE gedung.id = %s"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
 
@@ -74,7 +74,7 @@ def get_by_id(id: str, config):
                     }
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -86,7 +86,7 @@ def new(name: str, kampus_id: str, config):
              VALUES (%s, %s) RETURNING id"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (
                     name, 
@@ -101,7 +101,7 @@ def new(name: str, kampus_id: str, config):
                     "data": data[0]
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -112,7 +112,7 @@ def update(name: str, unit_id: str, id: str, config):
                  unit = %s
              WHERE id= %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 res = cur.execute(sql, (
                     name, 
@@ -123,7 +123,7 @@ def update(name: str, unit_id: str, id: str, config):
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -132,13 +132,13 @@ def remove(id: str, config):
     sql = """DELETE FROM gedung
              WHERE id = %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }

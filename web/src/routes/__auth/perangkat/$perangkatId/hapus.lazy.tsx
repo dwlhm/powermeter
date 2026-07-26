@@ -1,52 +1,83 @@
-import { PerangkatSubBody } from '@/perangkat/components'
-import { removeDevices } from '@/api/devices'
-import { useAuth } from '@/auth'
-import { Link, createLazyFileRoute } from '@tanstack/react-router'
-import { useMutation, useQueryClient } from 'react-query'
+import React from "react";
+import { removeDevices } from "@/api/devices";
+import { useAuth } from "@/auth";
+import { CompModal } from "@/common";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "react-query";
+import toast from "react-hot-toast";
 
-export const Route = createLazyFileRoute('/__auth/perangkat/$perangkatId/hapus')({
-  component: HapusPerangkat
-})
+export const Route = createLazyFileRoute("/__auth/perangkat/$perangkatId/hapus")(
+  {
+    component: HapusPerangkat,
+  },
+);
 
 function HapusPerangkat() {
+  const queryClient = useQueryClient();
+  const auth = useAuth();
+  const { permissions } = auth;
+  const { perangkatId } = Route.useParams();
+  const navigate = Route.useNavigate();
 
-    const queryClient = useQueryClient()
-    const auth = useAuth()
-    const { perangkatId } = Route.useParams()
-    const navigate = Route.useNavigate()
-    const mutation = useMutation({
-        mutationFn: removeDevices,
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: [ 'devices', auth.token ]})
-        }
-    })
-    const onRemove = async () => {
-        await mutation.mutate({
-            token: auth.token,
-            id: perangkatId
-        }, {
-            onSuccess: () => {
-                navigate({ to: "/perangkat" })
-            }
-        })
+  React.useEffect(() => {
+    if (!permissions.includes("device.delete")) {
+      navigate({ to: "/perangkat" });
     }
-    return(
-        <PerangkatSubBody>
-        <div className='bg-red-300 border border-red-500 p-3 rounded mb-5 flex justify-between items-center transition'>
-            <p>Yakin menghapus perangkat ini?</p>
-            <div>
-                <button
-                    onClick={onRemove} 
-                    className='py-2 px-5 rounded bg-red-500/50 mx-2 text-sm'>Hapus</button>
-                <Link 
-                    to='/perangkat/$perangkatId/data'
-                    params={{ perangkatId: perangkatId }}
-                    className='py-2 px-5 rounded bg-blue-900 mx-2 text-sm text-white'
-                >
-                    Tidak
-                </Link>
-            </div>
+  }, []);
+  const mutation = useMutation({
+    mutationFn: removeDevices,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["devices", auth.token] });
+    },
+  });
+
+  const onRemove = async () => {
+    await mutation.mutate(
+      {
+        token: auth.token,
+        id: perangkatId,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Perangkat berhasil dihapus");
+          navigate({ to: "/perangkat" });
+        },
+        onError: () => {
+          toast.error("Gagal menghapus perangkat");
+        },
+      },
+    );
+  };
+
+  return (
+    <CompModal
+      title="Hapus Perangkat"
+      closeTo="/perangkat/$perangkatId"
+      closeParams={{ perangkatId }}
+      className="max-w-md"
+    >
+      <div className="grid gap-6">
+        <p className="text-slate-600 dark:text-slate-300">
+          Apakah Anda yakin ingin menghapus perangkat ini? Tindakan ini tidak
+          dapat dibatalkan.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onRemove}
+            disabled={mutation.isLoading}
+            className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white py-2 px-4 rounded-md transition-colors"
+          >
+            {mutation.isLoading ? "Menghapus..." : "Ya, Hapus"}
+          </button>
+          <Link
+            to="/perangkat/$perangkatId"
+            params={{ perangkatId }}
+            className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2 px-4 rounded-md text-center border border-slate-300 dark:border-slate-700 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
+          >
+            Batal
+          </Link>
         </div>
-        </PerangkatSubBody>
-    )
+      </div>
+    </CompModal>
+  );
 }

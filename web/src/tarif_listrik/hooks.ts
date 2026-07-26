@@ -10,10 +10,12 @@ import { AxiosError } from "axios";
 
 export const useQueryTarifListrik = (
   token: string | null,
+  enabled = true,
 ): UseQueryResult<Api<TarifListrik>, AxiosError> => {
   return useQuery<Api<TarifListrik>, AxiosError>({
     queryKey: ["tarif.listrik", token],
     queryFn: getTarifListrik,
+    enabled,
   });
 };
 

@@ -52,3 +52,6 @@ docs/_build/
 modbus.log
 
 configuration/database.ini
+
+# Environment variables
+.env

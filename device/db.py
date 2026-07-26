@@ -1,5 +1,6 @@
-import psycopg2
+import psycopg
 import base64
+import json
 from datetime import datetime
 from ast import literal_eval
 from typing import Optional
@@ -11,16 +12,19 @@ def get_all(config):
                     unit.id, unit.name, 
                     kampus.id, kampus.name,
                     power_meter.id, power_meter.seri, power_meter.brand,
+                    power_meter.slave_id, power_meter.count, power_meter.timeout,
+                    power_meter_register.register,
                     device_status.status
                     FROM device 
              LEFT JOIN gedung ON device.gedung = gedung.id
              LEFT JOIN unit ON gedung.unit = unit.id
              LEFT JOIN kampus ON unit.kampus = kampus.id
              LEFT JOIN power_meter ON device.power_meter = power_meter.id
+             LEFT JOIN power_meter_register ON power_meter_register.power_meter = power_meter.id
              LEFT JOIN device_status ON device_status.device = device.id"""
 
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
 
@@ -52,15 +56,19 @@ def get_all(config):
                         "powermeter": {
                             "id": base64.b64encode(str(d[10]).encode()).decode(),
                             "seri": d[11],
-                            "brand": d[12]
+                            "brand": d[12],
+                            "slave_id": d[13],
+                            "count": d[14],
+                            "timeout": d[15],
+                            "register": literal_eval(d[16]) if d[16] else []
                         },
-                        "status": "online" if d[13] == True else "offline"
+                        "status": "online" if d[17] == True else "offline"
                     })
                 return {
                     "data": res
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -72,6 +80,7 @@ def get_by_id(id: str, config):
                     unit.id, unit.name, 
                     kampus.id, kampus.name,
                     power_meter.id, power_meter.seri, power_meter.brand,
+                    power_meter.slave_id, power_meter.count, power_meter.timeout,
                     power_meter_register.register, device_status.status
                     FROM device 
              LEFT JOIN gedung ON device.gedung = gedung.id
@@ -83,7 +92,7 @@ def get_by_id(id: str, config):
              WHERE device.id = %s"""
     
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (str(base64.b64decode(id).decode()), ))
 
@@ -115,13 +124,16 @@ def get_by_id(id: str, config):
                             "id": base64.b64encode(str(d[10]).encode()).decode(),
                             "seri": d[11],
                             "brand": d[12],
-                            "register": literal_eval(d[13])
+                            "slave_id": d[13],
+                            "count": d[14],
+                            "timeout": d[15],
+                            "register": literal_eval(d[16]) if d[16] else []
                         },
-                        "status": "online" if d[14] == True else "offline"
+                        "status": "online" if d[17] == True else "offline"
                     }
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print(Error)
         return {
             "error": str(Error)
@@ -138,7 +150,7 @@ def new(
     sql = """INSERT INTO device (name, gedung, ip_addr, port, power_meter)
              VALUES (%s, %s, %s, %s, %s) RETURNING id"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (
                     name, 
@@ -156,7 +168,7 @@ def new(
                     "data": data[0]
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -177,7 +189,7 @@ def update(
                  power_meter = %s
              WHERE id= %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 res = cur.execute(sql, (
                     name, 
@@ -191,7 +203,7 @@ def update(
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -200,13 +212,13 @@ def remove(id: str, config):
     sql = """DELETE FROM device
              WHERE id = %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -215,7 +227,7 @@ def get_device_status(device_id: str, config):
     sql = """SELECT status FROM device_status
              WHERE device = %s"""
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (str(base64.b64decode(device_id).decode()), ))
 
@@ -231,7 +243,7 @@ def get_device_status(device_id: str, config):
                     }
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -241,7 +253,7 @@ def insert_device_logs(device_id: str, type: str, message: str, config):
              VALUES (%s, %s, %s, %s)"""
     
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(device_id).decode(), type, str(message), datetime.now(), ))
                 conn.commit()
@@ -249,27 +261,49 @@ def insert_device_logs(device_id: str, type: str, message: str, config):
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
     
-def get_device_logs(device_id: str, config):
-    sql = """SELECT type, message, created_at FROM device_logs
-             WHERE device = %s AND
-             DATE_PART('month', created_at) = %s
-             ORDER BY id DESC"""
+def get_device_logs(
+    device_id: str,
+    config,
+    log_type: str | None = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
+    limit: int | None = None,
+):
+    filters = ["device = %s"]
+    params: list = [str(base64.b64decode(device_id).decode())]
+
+    if log_type:
+        filters.append("type = %s")
+        params.append(log_type)
+
+    if from_date:
+        filters.append("created_at >= %s")
+        params.append(from_date)
+
+    if to_date:
+        filters.append("created_at <= %s")
+        params.append(to_date)
+
+    sql = f"""SELECT type, message, created_at FROM device_logs
+             WHERE {' AND '.join(filters)}
+             ORDER BY created_at DESC"""
+
+    if limit and isinstance(limit, int) and limit > 0:
+        sql += " LIMIT %s"
+        params.append(limit)
+
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
-                cur.execute(sql, (str(base64.b64decode(device_id).decode()), datetime.now().month, ))
+                cur.execute(sql, tuple(params))
 
                 d = cur.fetchall()
 
-                if (d == None): 
-                    return {
-                        "error": "no data"
-                    }
                 res = []
                 for data in d:
                     res.append({
@@ -282,7 +316,7 @@ def get_device_logs(device_id: str, config):
                     "data": res
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -296,7 +330,7 @@ def set_device_status(device_id: str, status: bool, config):
                 update_at = NOW()"""
     
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(device_id).decode(), status, ))
                 conn.commit()
@@ -304,71 +338,18 @@ def set_device_status(device_id: str, status: bool, config):
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
     
 def get_latest_data(id: str, config):
-    sql = """SELECT DISTINCT ON (id) 
-        phase_voltage_a,
-        phase_voltage_b,
-        phase_voltage_c,
-        wire_voltage_ab,
-        wire_voltage_bc,
-        wire_voltage_ca,
-        phase_current_a,
-        phase_current_b,
-        phase_current_c,
-        active_power_a,
-        active_power_b,
-        active_power_c,
-        reactive_power_a,
-        reactive_power_b,
-        reactive_power_c,
-        apparent_power_a,
-        apparent_power_b,
-        apparent_power_c,
-        power_factor_a,
-        power_factor_b,
-        power_factor_c,
-        frequency,
-        active_power,
-        reactive_power,
-        positive_active_power,
-        negative_active_power,
-        positive_reactive_power,
-        negative_reactive_power,
-        current_active_power_demand,
-        maximum_active_power_demand,
-        current_reactive_power_demand,
-        maximum_reactive_power_demand,
-        a_phase_voltage_total_harmonic_content,
-        b_phase_voltage_total_harmonic_content,
-        c_phase_voltage_total_harmonic_content,
-        a_phase_current_total_harmonic_content,
-        b_phase_current_total_harmonic_content,
-        c_phase_current_total_harmonic_content,
-        o_phase_current,
-        phase_voltage_maximum,
-        Wires_voltage_maximum,
-        current_maximum,
-        voltage_imbalance,
-        current_imbalance,
-        a_b_phase_voltage_angle,
-        b_C_phase_voltage_angle,
-        c_a_phase_voltage_angle,
-        first_quadrant_reactive_energy,
-        second_quadrant_reactive_energy,
-        third_quadrant_reactive_energy,
-        fourth_quadrant_reactive_power,
-        timestamp
-             FROM data
+    sql = """SELECT DISTINCT ON (id) metrics, timestamp FROM data
              WHERE device_id = %s
              ORDER BY id DESC
              """
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (base64.b64decode(id).decode(), ))
 
@@ -379,65 +360,13 @@ def get_latest_data(id: str, config):
                 }
                 return {
                     "data": {
-                        "data": {
-                            "phase_voltage_a": d[0],
-                            "phase_voltage_b": d[1],
-                            "phase_voltage_c": d[2],
-                            "wire_voltage_ab": d[3],
-                            "wire_voltage_bc": d[4],
-                            "wire_voltage_ca": d[5],
-                            "phase_current_a": d[6],
-                            "phase_current_b": d[7],
-                            "phase_current_c": d[8],
-                            "active_power_a": d[9],
-                            "active_power_b": d[10],
-                            "active_power_c": d[11],
-                            "reactive_power_a": d[12],
-                            "reactive_power_b": d[13],
-                            "reactive_power_c": d[14],
-                            "apparent_power_a": d[15],
-                            "apparent_power_b": d[16],
-                            "apparent_power_c": d[17],
-                            "power_factor_a": d[18],
-                            "power_factor_b": d[19],
-                            "power_factor_c": d[20],
-                            "frequency": d[21],
-                            "active_power": d[22],
-                            "reactive_power": d[23],
-                            "positive_active_power": d[24],
-                            "negative_active_power": d[25],
-                            "positive_reactive_power": d[26],
-                            "negative_reactive_power": d[27],
-                            "current_active_power_demand": d[28],
-                            "maximum_active_power_demand": d[29],
-                            "current_reactive_power_demand": d[30],
-                            "maximum_reactive_power_demand": d[31],
-                            "a_phase_voltage_total_harmonic_content": d[32],
-                            "b_phase_voltage_total_harmonic_content": d[33],
-                            "c_phase_voltage_total_harmonic_content": d[34],
-                            "a_phase_current_total_harmonic_content": d[35],
-                            "b_phase_current_total_harmonic_content": d[36],
-                            "c_phase_current_total_harmonic_content": d[37],
-                            "o_phase_current": d[38],
-                            "phase_voltage_maximum": d[39],
-                            "Wires_voltage_maximum": d[40],
-                            "current_maximum": d[41],
-                            "voltage_imbalance": d[42],
-                            "current_imbalance": d[43],
-                            "a_b_phase_voltage_angle": d[44],
-                            "b_C_phase_voltage_angle": d[45],
-                            "c_a_phase_voltage_angle": d[46],
-                            "first_quadrant_reactive_energy": d[47],
-                            "second_quadrant_reactive_energy": d[48],
-                            "third_quadrant_reactive_energy": d[49],
-                            "fourth_quadrant_reactive_power": d[50],
-                        },
-                        "timestamp": d[-1]
+                        "data": d[0] if isinstance(d[0], dict) else json.loads(d[0]),
+                        "timestamp": d[1]
                     }
                 }
 
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": str(Error)
         }
@@ -451,123 +380,18 @@ def insert_latest_data(
     sql = """
     INSERT INTO data (
         device_id,
-        phase_voltage_a,
-        phase_voltage_b,
-        phase_voltage_c,
-        wire_voltage_ab,
-        wire_voltage_bc,
-        wire_voltage_ca,
-        phase_current_a,
-        phase_current_b,
-        phase_current_c,
-        active_power_a,
-        active_power_b,
-        active_power_c,
-        reactive_power_a,
-        reactive_power_b,
-        reactive_power_c,
-        apparent_power_a,
-        apparent_power_b,
-        apparent_power_c,
-        power_factor_a,
-        power_factor_b,
-        power_factor_c,
-        frequency,
-        active_power,
-        reactive_power,
-        positive_active_power,
-        negative_active_power,
-        positive_reactive_power,
-        negative_reactive_power,
-        current_active_power_demand,
-        maximum_active_power_demand,
-        current_reactive_power_demand,
-        maximum_reactive_power_demand,
-        a_phase_voltage_total_harmonic_content,
-        b_phase_voltage_total_harmonic_content,
-        c_phase_voltage_total_harmonic_content,
-        a_phase_current_total_harmonic_content,
-        b_phase_current_total_harmonic_content,
-        c_phase_current_total_harmonic_content,
-        o_phase_current,
-        phase_voltage_maximum,
-        Wires_voltage_maximum,
-        current_maximum,
-        voltage_imbalance,
-        current_imbalance,
-        a_b_phase_voltage_angle,
-        b_C_phase_voltage_angle,
-        c_a_phase_voltage_angle,
-        first_quadrant_reactive_energy,
-        second_quadrant_reactive_energy,
-        third_quadrant_reactive_energy,
-        fourth_quadrant_reactive_power,
+        metrics,
         timestamp
     ) VALUES (
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
         %s, %s, %s
     ) RETURNING id
     """
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (
                     base64.b64decode(id).decode(),
-                    data.get('phase_voltage_a'),
-                    data.get('phase_voltage_b'),
-                    data.get('phase_voltage_c'),
-                    data.get('wire_voltage_ab'),
-                    data.get('wire_voltage_bc'),
-                    data.get('wire_voltage_ca'),
-                    data.get('phase_current_a'),
-                    data.get('phase_current_b'),
-                    data.get('phase_current_c'),
-                    data.get('active_power_a'),
-                    data.get('active_power_b'),
-                    data.get('active_power_c'),
-                    data.get('reactive_power_a'),
-                    data.get('reactive_power_b'),
-                    data.get('reactive_power_c'),
-                    data.get('apparent_power_a'),
-                    data.get('apparent_power_b'),
-                    data.get('apparent_power_c'),
-                    data.get('power_factor_a'),
-                    data.get('power_factor_b'),
-                    data.get('power_factor_c'),
-                    data.get('frequency'),
-                    data.get('active_power'),
-                    data.get('reactive_power'),
-                    data.get('positive_active_power'),
-                    data.get('negative_active_power'),
-                    data.get('positive_reactive_power'),
-                    data.get('negative_reactive_power'),
-                    data.get('current_active_power_demand'),
-                    data.get('maximum_active_power_demand'),
-                    data.get('current_reactive_power_demand'),
-                    data.get('maximum_reactive_power_demand'),
-                    data.get('a_phase_voltage_total_harmonic_content'),
-                    data.get('b_phase_voltage_total_harmonic_content'),
-                    data.get('c_phase_voltage_total_harmonic_content'),
-                    data.get('a_phase_current_total_harmonic_content'),
-                    data.get('b_phase_current_total_harmonic_content'),
-                    data.get('c_phase_current_total_harmonic_content'),
-                    data.get('o_phase_current'),
-                    data.get('phase_voltage_maximum'),
-                    data.get('wires_voltage_maximum'),
-                    data.get('current_maximum'),
-                    data.get('voltage_imbalance'),
-                    data.get('current_imbalance'),
-                    data.get('a_b_phase_voltage_angle'),
-                    data.get('b_c_phase_voltage_angle'),
-                    data.get('c_a_phase_voltage_angle'),
-                    data.get('first_quadrant_reactive_energy'),
-                    data.get('second_quadrant_reactive_energy'),
-                    data.get('third_quadrant_reactive_energy'),
-                    data.get('fourth_quadrant_reactive_power'),
+                    json.dumps(data),
                     timestamp,
                 ))
                 
@@ -577,7 +401,7 @@ def insert_latest_data(
                     "data": True
                 }
 
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         print("Error Tipe: ", type(Error), data[str(Error)], Error)
         return {
             "error": {

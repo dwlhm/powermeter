@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 import base64
 
 def new(pbrand: str, pseri: str, config):
@@ -8,12 +8,12 @@ def new(pbrand: str, pseri: str, config):
     id = None
 
     try:
-        with  psycopg2.connect(**config) as conn:
+        with  psycopg.connect(**config) as conn:
             with  conn.cursor() as cur:
                 cur.execute(sql, (pseri, pbrand, ))
                 id = cur.fetchone()[0]
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
+    except (Exception, psycopg.DatabaseError) as error:
         return {
             "error": error
         }  
@@ -26,7 +26,7 @@ def get_all(config):
     sql = """SELECT * FROM power_meter"""
 
     try:
-        with  psycopg2.connect(**config) as conn:
+        with  psycopg.connect(**config) as conn:
             with  conn.cursor() as cur:
                 cur.execute(sql)
                 results = cur.fetchall()
@@ -40,7 +40,7 @@ def get_all(config):
                 return {
                     "data": result
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": Error
         }
@@ -50,7 +50,7 @@ def get_one(id: str, config):
              WHERE id = %s LIMIT 1"""
     
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (id, ))
                 result = cur.fetchone()
@@ -60,7 +60,7 @@ def get_one(id: str, config):
                 return {
                     "data": result
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": Error
         }
@@ -72,14 +72,14 @@ def update(id: str, pbrand: str, pseri: str, config):
              WHERE id = %s"""
     
     try:
-        with psycopg2.connect(**config) as conn:
+        with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (pseri, pbrand, id ))
                 conn.commit()
                 return {
                     "data": True
                 }
-    except (Exception, psycopg2.DatabaseError) as Error:
+    except (Exception, psycopg.DatabaseError) as Error:
         return {
             "error": Error
         }

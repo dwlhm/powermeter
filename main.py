@@ -11,6 +11,7 @@ import gedung.router as gedung
 import device.router as device
 import data.router as data
 import tagihan_listrik.router as tagihan_listrik
+import role.router as role
 
 from configuration.config import load_config
 
@@ -22,12 +23,18 @@ origins = [
     "http://localhost",
     "http://localhost:5173",
     "http://localhost:4173",
+    "http://127.0.0.1",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:4173",
+    "https://web.mpm.orb.local",
+    "http://web.mpm.orb.local",
     "https://simaung.unsil.ac.id",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.trycloudflare\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,3 +50,4 @@ app.include_router(gedung.router)
 app.include_router(device.router)
 app.include_router(data.router)
 app.include_router(tagihan_listrik.router)
+app.include_router(role.router)

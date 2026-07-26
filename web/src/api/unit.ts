@@ -65,12 +65,16 @@ export async function updateUnit(props: Token<Unit>): Promise<Api<Unit>> {
   return data;
 }
 
-export async function removeUnit(props: { token: string | null; id: string }) {
+export async function removeUnit(props: { token: string | null; id: string; mode?: string; move_to_id?: string }) {
   const config = {
     method: "delete",
     headers: {
       Authorization: `Bearer ${props.token}`,
     },
+    params: {
+      mode: props.mode,
+      move_to_id: props.move_to_id
+    }
   };
 
   const res = await axios(
