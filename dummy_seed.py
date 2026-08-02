@@ -60,8 +60,8 @@ def _ensure_power_meter(cur) -> int:
         pm_id = row[0]
     else:
         cur.execute(
-            "INSERT INTO power_meter (seri, brand) VALUES (%s, %s) RETURNING id",
-            (DEFAULT_SERI, DEFAULT_BRAND),
+            "INSERT INTO power_meter (seri, brand, slave_id, count, timeout) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            (DEFAULT_SERI, DEFAULT_BRAND, 1, 2, 4),
         )
         pm_id = cur.fetchone()[0]
 

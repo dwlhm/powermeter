@@ -19,7 +19,7 @@ export async function getPowermeter(
 ): Promise<Api<Powermeter[]>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/powermeter`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/powermeter/`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -46,7 +46,7 @@ export async function newPowermeter(props: Token<Powermeter>) {
   };
 
   const res = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/powermeter`,
+    `${import.meta.env.VITE_BACKEND_URL}/powermeter/`,
     config,
   );
 

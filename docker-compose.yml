@@ -33,8 +33,7 @@ services:
   api:
     build: .
     container_name: mpm_fastapi
-    ports:
-      - "8000:8000"
+    # API tidak di-expose ke host; hanya diakses internal via nginx (80/443).
     depends_on:
       migrations:
         condition: service_completed_successfully
@@ -71,9 +70,34 @@ services:
       - "5173:5173"
     depends_on:
       - api
+    environment:
+      # Backend URL yang digunakan frontend. Default /api; Vite dev server akan
+      # proxy ke service api internal.
+      # Kalau mau override, set VITE_BACKEND_URL di .env atau environment.
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL:-/api}
     volumes:
       - ./web:/app
       - /app/node_modules # Prevent host node_modules from overwriting container's
+
+  # Production frontend: serves the built Vite app on standard HTTP/HTTPS ports
+  # with SSL termination. Generates or mounts certificates from ./web/ssl.
+  web-ssl:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.prod
+      args:
+        # Backend URL yang dibake ke build frontend. Default /api; Nginx akan
+        # proxy ke service api dengan prefix /api.
+        # Bisa di-override via VITE_BACKEND_URL.
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL:-/api}
+    container_name: mpm_web_ssl
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+    volumes:
+      - ./web/ssl:/etc/nginx/ssl:ro
 
 volumes:
   postgres_dummy_data:

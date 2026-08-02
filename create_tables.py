@@ -18,8 +18,17 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS power_meter (
             id SERIAL PRIMARY KEY,
             seri VARCHAR(50) NOT NULL,
-            brand VARCHAR(50) NOT NULL
+            brand VARCHAR(50) NOT NULL,
+            slave_id INT DEFAULT 1,
+            count INT DEFAULT 2,
+            timeout INT DEFAULT 4
         )
+        """,
+        """
+        ALTER TABLE power_meter
+            ADD COLUMN IF NOT EXISTS slave_id INT DEFAULT 1,
+            ADD COLUMN IF NOT EXISTS count INT DEFAULT 2,
+            ADD COLUMN IF NOT EXISTS timeout INT DEFAULT 4
         """,
         """
         CREATE TABLE IF NOT EXISTS kampus (

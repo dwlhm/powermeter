@@ -16,11 +16,29 @@ docker compose up -d --build
 
 Setelah semua container berjalan, akses:
 
-| Service  | URL                        |
-|----------|----------------------------|
-| Frontend | http://localhost:5173      |
-| API      | http://localhost:8000      |
-| DB       | localhost:5432             |
+| Service            | URL                          |
+|--------------------|------------------------------|
+| Frontend (dev)     | http://localhost:5173        |
+| Frontend (SSL)     | https://localhost              |
+| Frontend (HTTP)    | http://localhost (redirect ke HTTPS) |
+| DB                 | localhost:5432                 |
+
+> **API tidak di-expose ke host.** Semua request API diarahkan melalui Nginx (port 80/443) atau Vite dev proxy (port 5173) ke service `api` secara internal dengan prefix `/api`.
+> Contoh: `https://localhost/api/users/me` → `api:8000/users/me`.
+>
+> `VITE_BACKEND_URL` di-set otomatis oleh docker compose menjadi `/api`.
+
+### SSL Frontend (Port 80/443)
+
+Service `web-ssl` menjalankan frontend hasil build melalui Nginx dengan terminasi SSL pada port `80` dan `443`. Sertifikat self-signed sudah di-generate di `web/ssl/`; ganti dengan sertifikat dari CA terpercaya untuk production.
+
+```bash
+# Generate ulang sertifikat self-signed (development only)
+./web/ssl/generate-certs.sh
+
+# Jalankan stack lengkap termasuk frontend SSL
+docker compose up -d --build
+```
 
 ## Default Credentials
 

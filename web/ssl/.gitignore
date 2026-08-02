@@ -1,0 +1,4 @@
+# Ignore generated SSL certificates; keep the directory for volume mounting.
+*
+!.gitignore
+!generate-certs.sh

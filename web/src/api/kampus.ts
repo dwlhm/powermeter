@@ -11,7 +11,7 @@ export interface Kampus {
 export async function getKampus(context: QueryFunctionContext): Promise<Api<Kampus[]>> {
     const config = {
         method: 'get',
-        url: `${import.meta.env.VITE_BACKEND_URL}/kampus`,
+        url: `${import.meta.env.VITE_BACKEND_URL}/kampus/`,
         headers: { 
           'Authorization': `Bearer ${context.queryKey[1]}`
         }
@@ -33,7 +33,7 @@ export async function newKampus(props: Token<{name: string}>) {
       })
     }
   
-    const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/kampus`, config)
+    const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/kampus/`, config)
   
     return res
 }

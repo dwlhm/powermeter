@@ -15,7 +15,7 @@ export async function getUnit(
 ): Promise<Api<Unit[]>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/unit`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/unit/`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -38,7 +38,7 @@ export async function newUnit(props: Token<Unit>) {
     }),
   };
 
-  const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/unit`, config);
+  const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/unit/`, config);
 
   return res;
 }

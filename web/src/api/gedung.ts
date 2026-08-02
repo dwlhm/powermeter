@@ -13,7 +13,7 @@ export interface Gedung {
 export async function getGedung(context: QueryFunctionContext): Promise<Api<Gedung[]>> {
     const config = {
         method: 'get',
-        url: `${import.meta.env.VITE_BACKEND_URL}/gedung`,
+        url: `${import.meta.env.VITE_BACKEND_URL}/gedung/`,
         headers: { 
           'Authorization': `Bearer ${context.queryKey[1]}`
         }
@@ -36,7 +36,7 @@ export async function newGedung(props: Token<Gedung>) {
       })
     }
   
-    const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/gedung`, config)
+    const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/gedung/`, config)
   
     return res
 }

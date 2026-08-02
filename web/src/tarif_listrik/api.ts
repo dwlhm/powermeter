@@ -14,7 +14,7 @@ export async function getTarifListrik(
 ): Promise<Api<TarifListrik>> {
   const config = {
     method: "get",
-    url: `${import.meta.env.VITE_BACKEND_URL}/tarif-listrik`,
+    url: `${import.meta.env.VITE_BACKEND_URL}/tarif-listrik/`,
     headers: {
       Authorization: `Bearer ${context.queryKey[1]}`,
     },
@@ -39,7 +39,7 @@ export async function updateTarifListrik(
   };
 
   const { data } = await axios(
-    `${import.meta.env.VITE_BACKEND_URL}/tarif-listrik`,
+    `${import.meta.env.VITE_BACKEND_URL}/tarif-listrik/`,
     config,
   );
 
