@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  powermeter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: powermeter-app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
