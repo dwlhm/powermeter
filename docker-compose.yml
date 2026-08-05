@@ -7,5 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: powermeter-app
     ports:
-      - "8080:80"
+      - "80:80"      # HTTP (Auto-redirect ke HTTPS)
+      - "443:443"    # HTTPS
+    volumes:
+      - ./certs:/etc/nginx/certs:ro # Sertifikat SSL (cert.crt & key.key)
     restart: unless-stopped

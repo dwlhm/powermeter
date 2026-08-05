@@ -8,6 +8,11 @@ dist-ssr
 build
 .cache
 
+# SSL Certificates & Private Keys
+certs/*.crt
+certs/*.key
+certs/*.pem
+
 # Environment variables
 .env
 .env.local
