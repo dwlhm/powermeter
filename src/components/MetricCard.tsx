@@ -23,6 +23,8 @@ export const MetricCard = ({ label, value, unit, decimals = 1, icon, accent = 't
   const TrendIcon = trendUp ? ArrowUpRight : trendDown ? ArrowDownRight : Minus;
   const trendColor = trendUp ? 'text-success-600' : trendDown ? 'text-danger-600' : 'text-slate-400';
 
+  const gradientId = `grad-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
   return (
     <Card className="metric-card">
       <div className="flex items-start justify-between">
@@ -55,12 +57,12 @@ export const MetricCard = ({ label, value, unit, decimals = 1, icon, accent = 't
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={series}>
               <defs>
-                <linearGradient id={`grad-${label}`} x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.35} />
                   <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <Area type="monotone" dataKey="v" stroke="#3b82f6" strokeWidth={1.5} fill={`url(#grad-${label})`} isAnimationActive={false} />
+              <Area type="monotone" dataKey="v" stroke="#3b82f6" strokeWidth={1.5} fill={`url(#${gradientId})`} isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
