@@ -41,7 +41,7 @@ export const LoginPage = () => {
       <div className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden bg-gradient-to-br from-brand-700 via-brand-600 to-accent-600 text-white">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 70% 60%, white 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
         <div className="relative">
-          <Logo size="lg" />
+          <Logo size="lg" textClassName="text-white" />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

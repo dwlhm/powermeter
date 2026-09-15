@@ -1,4 +1,4 @@
-# VoltIQ — Industrial Energy Management System (EMS)
+# SI-MOLIS — Industrial Energy Management System (EMS)
 
 A production-ready, enterprise-grade Energy Management System built with React, simulating a commercial SCADA/IoT power monitoring platform (Siemens, Schneider EcoStruxure, ABB Ability, Ignition Perspective, Grafana Enterprise).
 

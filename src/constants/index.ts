@@ -1,6 +1,6 @@
 import type { Role } from '@/types';
 
-export const APP_NAME = 'VoltIQ';
+export const APP_NAME = 'SI-MOLIS';
 export const APP_TAGLINE = 'Industrial Energy Management System';
 
 export const STORAGE_KEYS = {
